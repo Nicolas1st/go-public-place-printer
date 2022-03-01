@@ -19,6 +19,12 @@ type JobQueue struct {
 	jobsStatus        map[interfaces.JobID]jobStatus // to avoid linear search time
 }
 
+func NewJobQueue() *JobQueue {
+	return &JobQueue{
+		UniqueIDGenerator: NewJobIDGenerator(),
+	}
+}
+
 func (q *JobQueue) Enqueue(job interfaces.Job) interfaces.JobID {
 	// set unique id to incoming job
 	jobID := q.UniqueIDGenerator()

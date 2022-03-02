@@ -22,7 +22,7 @@ type JobQueue struct {
 func NewJobQueue() *JobQueue {
 	return &JobQueue{
 		UniqueIDGenerator: NewJobIDGenerator(),
-		jobs:              make(chan interfaces.Job),
+		jobs:              make(chan interfaces.Job, 20),
 		jobsStatus:        make(map[interfaces.JobID]jobStatus),
 	}
 }

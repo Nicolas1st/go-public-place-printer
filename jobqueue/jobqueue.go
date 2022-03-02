@@ -22,6 +22,8 @@ type JobQueue struct {
 func NewJobQueue() *JobQueue {
 	return &JobQueue{
 		UniqueIDGenerator: NewJobIDGenerator(),
+		jobs:              make(chan interfaces.Job),
+		jobsStatus:        make(map[interfaces.JobID]jobStatus),
 	}
 }
 

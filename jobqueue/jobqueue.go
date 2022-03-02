@@ -41,7 +41,7 @@ func (q *JobQueue) Enqueue(job interfaces.Job) interfaces.JobID {
 	return jobID
 }
 
-func (q *JobQueue) Dequeue(job interfaces.Job) (*interfaces.Job, error) {
+func (q *JobQueue) Dequeue() (interfaces.Job, error) {
 	// get the next job
 	// if queue is empty return error
 	// otherwise loop till the job has status not equal to cancelled
@@ -53,7 +53,7 @@ func (q *JobQueue) Dequeue(job interfaces.Job) (*interfaces.Job, error) {
 			}
 
 			delete(q.jobsStatus, job.GetID())
-			return &job, nil
+			return job, nil
 		default:
 			return nil, errors.New("job queue is empty")
 		}

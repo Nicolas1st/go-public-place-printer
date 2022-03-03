@@ -1,20 +1,24 @@
 package job
 
-import "printer/interfaces"
+import (
+	"errors"
+	"printer/interfaces"
+)
 
 type Job struct {
 	ID   interfaces.JobID
 	Func func() error
 }
 
-func NewJob(jobFunc func() error) Job {
-	return Job{
+func NewJob(jobFunc func() error) *Job {
+	return &Job{
 		Func: jobFunc,
 	}
 }
 
 func (job *Job) Execute() error {
-	return job.Func()
+	// return job.Func()
+	return errors.New("error occured")
 }
 
 func (job *Job) GetID() interfaces.JobID {

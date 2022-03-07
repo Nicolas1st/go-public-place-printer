@@ -2,5 +2,5 @@ package pages
 
 var SignUpPage = Page{
 	mainTemplateName: "signup.html",
-	allTemplateNames: []string{"signin.html", "navbar.html"},
+	allTemplateNames: []string{"signup.html", "navbar.html"},
 }

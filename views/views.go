@@ -10,7 +10,7 @@ import (
 func NewRouter(templates interfaces.Templates) *mux.Router {
 	r := mux.NewRouter()
 
-	r.Handle("/signin",
+	r.Handle("/login",
 		BuildLogin(templates),
 	).Methods(http.MethodGet)
 

@@ -9,7 +9,7 @@ import (
 func BuildSignin(templates interfaces.Templates) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			signinTemplate := templates.GetSignin()
+			signinTemplate := templates.GetLogin()
 
 			// data query logic
 			// to be added in the future

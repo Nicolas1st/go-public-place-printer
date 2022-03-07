@@ -1,8 +1,7 @@
-package templates
+package pages
 
 import (
 	"html/template"
-	"printer/templates/pages"
 )
 
 type Pages struct {
@@ -13,10 +12,10 @@ type Templates struct {
 	siginin *template.Template
 }
 
-func NewTemplates() *Templates {
+func NewTemplates(htmlTemplatesPath string) *Templates {
 	return &Templates{
-		signup:  pages.SignUpPage.BuildTemplate(),
-		siginin: pages.SignInPage.BuildTemplate(),
+		signup:  SignUpPage.BuildTemplate(htmlTemplatesPath),
+		siginin: SignInPage.BuildTemplate(htmlTemplatesPath),
 	}
 }
 

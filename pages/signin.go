@@ -1,6 +1,6 @@
 package pages
 
 var SignInPage = Page{
-	mainFileName: "signin.html",
-	allFileNames: []string{"signin.html", "navbar.html"},
+	mainTemplateName: "signin.html",
+	allTemplateNames: []string{"signin.html", "navbar.html"},
 }

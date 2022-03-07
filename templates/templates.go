@@ -1,7 +1,6 @@
 package templates
 
 import (
-	"fmt"
 	"html/template"
 	"printer/templates/pages"
 )
@@ -10,24 +9,24 @@ type Pages struct {
 }
 
 type Templates struct {
-	Signup *template.Template
-	Signin *template.Template
-}
-
-func BuildTemplate(p *pages.Page) *template.Template {
-	template := template.New(p.GetMainFilePath())
-
-	template, err := template.ParseFiles(p.GetAllFilePaths()...)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	return template
+	signup  *template.Template
+	siginin *template.Template
 }
 
 func NewTemplates() *Templates {
 	return &Templates{
-		Signup: pages.SignUpPage.BuildTemplate(),
-		Signin: pages.SignInPage.BuildTemplate(),
+		signup:  pages.SignUpPage.BuildTemplate(),
+		siginin: pages.SignInPage.BuildTemplate(),
 	}
+}
+
+// probably redundant, but the idea is to use
+// dependency injection, to make
+// the templates depent on views
+func (t *Templates) GetSignup() *template.Template {
+	return t.signup
+}
+
+func (t *Templates) GetSignin() *template.Template {
+	return t.siginin
 }

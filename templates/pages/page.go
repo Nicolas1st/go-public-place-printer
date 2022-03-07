@@ -1,8 +1,8 @@
 package pages
 
 import (
-	"fmt"
 	"html/template"
+	"log"
 	"path"
 )
 
@@ -12,29 +12,20 @@ type Page struct {
 }
 
 func (p *Page) BuildTemplate() *template.Template {
-	template := template.New(p.GetMainFilePath())
+	mainFilePath := getPathToTemplate(p.mainFileName)
+	allFilePaths := []string{}
+	for _, name := range p.allFileNames {
+		allFilePaths = append(allFilePaths, getPathToTemplate(name))
+	}
 
-	template, err := template.ParseFiles(p.GetAllFilePaths()...)
+	template, err := template.New(mainFilePath).ParseFiles(allFilePaths...)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 
 	return template
 }
 
-func GetAbsolutePath(filepath string) string {
-	return path.Join("templates", "static", filepath)
-}
-
-func (p *Page) GetMainFilePath() string {
-	return GetAbsolutePath(p.mainFileName)
-}
-
-func (p *Page) GetAllFilePaths() []string {
-	var filepaths []string
-	for _, name := range p.allFileNames {
-		filepaths = append(filepaths, GetAbsolutePath(name))
-	}
-
-	return filepaths
+func getPathToTemplate(templateFileName string) string {
+	return path.Join("templates", "static", templateFileName)
 }

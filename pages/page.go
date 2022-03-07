@@ -1,31 +1,36 @@
 package pages
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"path"
 )
 
 type Page struct {
-	mainFileName string
-	allFileNames []string
+	mainTemplateName string
+	allTemplateNames []string
 }
 
-func (p *Page) BuildTemplate() *template.Template {
-	mainFilePath := getPathToTemplate(p.mainFileName)
+func (p *Page) BuildTemplate(htmlTemplatesPath string) *template.Template {
+	tmpl := template.New(p.mainTemplateName)
+
 	allFilePaths := []string{}
-	for _, name := range p.allFileNames {
-		allFilePaths = append(allFilePaths, getPathToTemplate(name))
+	for _, name := range p.allTemplateNames {
+		allFilePaths = append(allFilePaths, getPathToTemplate(htmlTemplatesPath, name))
 	}
 
-	template, err := template.New(mainFilePath).ParseFiles(allFilePaths...)
+	template, err := tmpl.ParseFiles(allFilePaths...)
 	if err != nil {
+		// The project should not start if the templates can not be built
+		fmt.Println("Make you sure the path to the html templates was correctly specified")
+		fmt.Println("The path should be relative to the main executable")
 		log.Fatal(err)
 	}
 
 	return template
 }
 
-func getPathToTemplate(templateFileName string) string {
-	return path.Join("templates", "static", templateFileName)
+func getPathToTemplate(htmlTemplatesPath, templateName string) string {
+	return path.Join(htmlTemplatesPath, templateName)
 }

@@ -26,6 +26,6 @@ func (t *Templates) GetSignup() *template.Template {
 	return t.signup
 }
 
-func (t *Templates) GetSignin() *template.Template {
+func (t *Templates) GetLogin() *template.Template {
 	return t.siginin
 }

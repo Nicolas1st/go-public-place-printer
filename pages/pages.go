@@ -15,7 +15,7 @@ type Templates struct {
 func NewTemplates(htmlTemplatesPath string) *Templates {
 	return &Templates{
 		signup:  SignUpPage.BuildTemplate(htmlTemplatesPath),
-		siginin: SignInPage.BuildTemplate(htmlTemplatesPath),
+		siginin: LoginPage.BuildTemplate(htmlTemplatesPath),
 	}
 }
 

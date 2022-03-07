@@ -6,7 +6,7 @@ import (
 	"printer/interfaces"
 )
 
-func BuildSignin(templates interfaces.Templates) http.Handler {
+func BuildLogin(templates interfaces.Templates) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			signinTemplate := templates.GetLogin()

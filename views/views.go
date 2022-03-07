@@ -11,7 +11,7 @@ func NewRouter(templates interfaces.Templates) *mux.Router {
 	r := mux.NewRouter()
 
 	r.Handle("/signin",
-		BuildSignin(templates),
+		BuildLogin(templates),
 	).Methods(http.MethodGet)
 
 	r.Handle("/signup",

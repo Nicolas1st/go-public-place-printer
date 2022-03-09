@@ -63,7 +63,10 @@ func (q *JobQueue) Dequeue() (interfaces.Job, error) {
 func (q *JobQueue) CancelJob(jobID interfaces.JobID) error {
 	// check if the job is currently in the queue
 	// checking to avoid memory leak
-	if _, ok := q.jobsStatus[jobID]; ok {
+	if status, ok := q.jobsStatus[jobID]; ok {
+		if status == cancelled {
+			return fmt.Errorf("the job %v had been already been canceled", jobID)
+		}
 		q.jobsStatus[jobID] = cancelled
 		return nil
 	}

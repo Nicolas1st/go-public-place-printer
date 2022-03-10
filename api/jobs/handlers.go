@@ -24,8 +24,12 @@ func BuildCancelJob(q interfaces.JobQueue) func(http.ResponseWriter, *http.Reque
 		body := CancelJobRequest{}
 		json.NewDecoder(r.Body).Decode(&body)
 
-		q.CancelJob(body.ID)
+		err := q.CancelJob(body.ID)
+		if err == nil {
+			json.NewEncoder(w).Encode("Job has been canceled")
+		} else {
+			json.NewEncoder(w).Encode("Job with the id provided does not exist")
+		}
 
-		json.NewEncoder(w).Encode("Job has been canceled")
 	}
 }

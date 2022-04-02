@@ -1,4 +1,4 @@
-package jobqueue
+package jobq
 
 import "printer/interfaces"
 

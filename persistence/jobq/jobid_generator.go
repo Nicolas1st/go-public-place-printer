@@ -1,7 +1,9 @@
 package jobq
 
+type JobID uint
+
 type JobIDGenerator struct {
-	nextJobID int
+	nextJobID JobID
 }
 
 func NewJobIDGenerator() *JobIDGenerator {
@@ -10,7 +12,7 @@ func NewJobIDGenerator() *JobIDGenerator {
 	}
 }
 
-func (g *JobIDGenerator) newJobID() int {
+func (g *JobIDGenerator) newJobID() JobID {
 	jobID := g.nextJobID
 	g.nextJobID++
 

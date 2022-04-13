@@ -1,22 +1,13 @@
 package jobq
 
 import (
-	"errors"
-	"printer/job"
 	"testing"
 )
 
 func TestEnqueueAndDequeque(t *testing.T) {
-
 	// create job for testing
-	job := job.NewJob(
-		func() error {
-			// do stuff
-			return errors.New("error occured")
-		},
-	)
+	job := NewJobBuilder()(0, "/path/stuff", "username")
 
-	// create queue
 	q := NewJobQueue()
 
 	// dequeueing from an empty queue
@@ -29,7 +20,7 @@ func TestEnqueueAndDequeque(t *testing.T) {
 	}
 
 	// enqueueing the job
-	jobID := q.Enqueue(job)
+	jobID := q.Enqueue(*job)
 	status, ok := q.jobsStatus[jobID]
 
 	if !ok {
@@ -51,11 +42,10 @@ func TestEnqueueAndDequeque(t *testing.T) {
 			t.Fail()
 		}
 
-		if job.GetID() != jobID {
+		if job.ID != jobID {
 			t.Log("ID of enuqued job should not be changed when dequeued")
 			t.Fail()
 		}
-
 	}
 
 	// check the queue is empty

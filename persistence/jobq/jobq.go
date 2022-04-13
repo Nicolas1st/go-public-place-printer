@@ -3,7 +3,6 @@ package jobq
 import (
 	"errors"
 	"fmt"
-	"printer/interfaces"
 )
 
 type jobStatus byte
@@ -14,23 +13,21 @@ const (
 )
 
 type JobQueue struct {
-	UniqueIDGenerator func() interfaces.JobID
-	jobs              chan interfaces.Job
-	jobsStatus        map[interfaces.JobID]jobStatus // to avoid linear search time
+	JobIDGenerator *JobIDGenerator
+	jobs           chan Job
+	jobsStatus     map[JobID]jobStatus // to avoid linear search time
 }
 
 func NewJobQueue() *JobQueue {
 	return &JobQueue{
-		UniqueIDGenerator: NewJobIDGenerator(),
-		jobs:              make(chan interfaces.Job, 20),
-		jobsStatus:        make(map[interfaces.JobID]jobStatus),
+		JobIDGenerator: NewJobIDGenerator(),
+		jobs:           make(chan Job, 20),
+		jobsStatus:     make(map[JobID]jobStatus),
 	}
 }
 
-func (q *JobQueue) Enqueue(job interfaces.Job) interfaces.JobID {
-	// set unique id to incoming job
-	jobID := q.UniqueIDGenerator()
-	job.SetID(jobID)
+func (q *JobQueue) Enqueue(job Job) JobID {
+	jobID := job.ID
 
 	// set the status for the job
 	q.jobsStatus[jobID] = toBeDone
@@ -41,26 +38,26 @@ func (q *JobQueue) Enqueue(job interfaces.Job) interfaces.JobID {
 	return jobID
 }
 
-func (q *JobQueue) Dequeue() (interfaces.Job, error) {
+func (q *JobQueue) Dequeue() (Job, error) {
 	// get the next job
 	// if queue is empty return error
 	// otherwise loop till the job has status not equal to cancelled
 	for {
 		select {
 		case job := <-q.jobs:
-			if q.jobsStatus[job.GetID()] == cancelled {
+			if q.jobsStatus[job.ID] == cancelled {
 				continue
 			}
 
-			delete(q.jobsStatus, job.GetID())
+			delete(q.jobsStatus, job.ID)
 			return job, nil
 		default:
-			return nil, errors.New("job queue is empty")
+			return Job{}, errors.New("job queue is empty")
 		}
 	}
 }
 
-func (q *JobQueue) CancelJob(jobID interfaces.JobID) error {
+func (q *JobQueue) CancelJob(jobID JobID) error {
 	// check if the job is currently in the queue
 	// checking to avoid memory leak
 	if status, ok := q.jobsStatus[jobID]; ok {

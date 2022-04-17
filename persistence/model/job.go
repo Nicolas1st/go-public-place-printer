@@ -8,10 +8,13 @@ type Job struct {
 	Username string
 }
 
-func NewJob(id JobID, filepath, username string) *Job {
+func NewJob(filepath, username string) *Job {
 	return &Job{
-		ID:       id,
 		FilePath: filepath,
 		Username: username,
 	}
+}
+
+func (j *Job) SetID(id JobID) {
+	j.ID = id
 }

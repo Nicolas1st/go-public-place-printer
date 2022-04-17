@@ -28,7 +28,8 @@ func NewJobQueue() *JobQueue {
 }
 
 func (q *JobQueue) Enqueue(job model.Job) model.JobID {
-	jobID := job.ID
+	jobID := q.JobIDGenerator.newJobID()
+	job.SetID(jobID)
 
 	// set the status for the job
 	q.jobsStatus[jobID] = toBeDone

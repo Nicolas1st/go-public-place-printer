@@ -17,8 +17,8 @@ func newFileNamer(pathToStoreFiles string) *FileNamer {
 	}
 }
 
-func (f FileNamer) newFilePath(username string) string {
-	filePath := path.Join(f.pathToStoreFiles, username, strconv.Itoa(f.nextFileID))
+func (f FileNamer) newFilePath(username, submittedFileName string) string {
+	filePath := path.Join(f.pathToStoreFiles, username, strconv.Itoa(f.nextFileID), submittedFileName)
 	f.nextFileID++
 
 	return filePath

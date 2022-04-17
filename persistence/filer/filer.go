@@ -5,26 +5,22 @@ import (
 	"os"
 )
 
-type Filer struct {
+type filer struct {
 	pathToStoreFiles string
-	maxFileSize      int64
-	storedFilePaths  map[string]string
 	fileNamer        *FileNamer
 }
 
-func NewFiler(pathToStoreFiles string, maxFileSize int64) *Filer {
-	return &Filer{
+func NewFiler(pathToStoreFiles string, maxFileSize int64) *filer {
+	return &filer{
 		pathToStoreFiles: pathToStoreFiles,
-		maxFileSize:      maxFileSize,
-		storedFilePaths:  map[string]string{},
 		fileNamer:        newFileNamer(pathToStoreFiles),
 	}
 }
 
-func (f *Filer) StoreFile(uploadedFile io.Reader, username string) (filename string, err error) {
-	filename = f.fileNamer.newFilePath(username)
+func (f *filer) StoreFile(uploadedFile io.Reader, username, submittedFilename string) (filepath string, err error) {
+	filepath = f.fileNamer.newFilePath(username, submittedFilename)
 
-	file, err := os.Create(filename)
+	file, err := os.Create(filepath)
 	defer file.Close()
 	if err != nil {
 		return "", err
@@ -35,13 +31,9 @@ func (f *Filer) StoreFile(uploadedFile io.Reader, username string) (filename str
 		return "", err
 	}
 
-	return filename, nil
+	return filepath, nil
 }
 
-func (f *Filer) RemoveFile(filePath string) error {
-	if _, ok := f.storedFilePaths[filePath]; ok {
-		return nil
-	}
-
+func (f *filer) RemoveFile(filePath string) error {
 	return os.Remove(filePath)
 }

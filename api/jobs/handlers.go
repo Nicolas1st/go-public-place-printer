@@ -52,13 +52,13 @@ func (resource *jobsResource) SubmitJob(w http.ResponseWriter, r *http.Request) 
 	jobID := resource.jobq.Enqueue(*job)
 
 	// create response
-	responseBody := NewResponse(jobID)
+	responseBody := newResponse(jobID)
 	json.NewEncoder(w).Encode(responseBody)
 }
 
 func (resouce *jobsResource) CancelJob(w http.ResponseWriter, r *http.Request) {
 	// parsing the request
-	request := CancelJobRequest{}
+	request := cancelJobRequest{}
 	err := json.NewDecoder(r.Body).Decode(&request)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

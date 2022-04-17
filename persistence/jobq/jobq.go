@@ -3,6 +3,7 @@ package jobq
 import (
 	"errors"
 	"fmt"
+	"printer/persistence/model"
 )
 
 type jobStatus byte
@@ -14,19 +15,19 @@ const (
 
 type JobQueue struct {
 	JobIDGenerator *JobIDGenerator
-	jobs           chan Job
-	jobsStatus     map[JobID]jobStatus // to avoid linear search time
+	jobs           chan model.Job
+	jobsStatus     map[model.JobID]jobStatus // to avoid linear search time
 }
 
 func NewJobQueue() *JobQueue {
 	return &JobQueue{
-		JobIDGenerator: NewJobIDGenerator(),
-		jobs:           make(chan Job, 20),
-		jobsStatus:     make(map[JobID]jobStatus),
+		JobIDGenerator: newJobIDGenerator(),
+		jobs:           make(chan model.Job, 20),
+		jobsStatus:     make(map[model.JobID]jobStatus),
 	}
 }
 
-func (q *JobQueue) Enqueue(job Job) JobID {
+func (q *JobQueue) Enqueue(job model.Job) model.JobID {
 	jobID := job.ID
 
 	// set the status for the job
@@ -38,7 +39,7 @@ func (q *JobQueue) Enqueue(job Job) JobID {
 	return jobID
 }
 
-func (q *JobQueue) Dequeue() (Job, error) {
+func (q *JobQueue) Dequeue() (model.Job, error) {
 	// get the next job
 	// if queue is empty return error
 	// otherwise loop till the job has status not equal to cancelled
@@ -52,12 +53,12 @@ func (q *JobQueue) Dequeue() (Job, error) {
 			delete(q.jobsStatus, job.ID)
 			return job, nil
 		default:
-			return Job{}, errors.New("job queue is empty")
+			return model.Job{}, errors.New("job queue is empty")
 		}
 	}
 }
 
-func (q *JobQueue) CancelJob(jobID JobID) error {
+func (q *JobQueue) CancelJob(jobID model.JobID) error {
 	// check if the job is currently in the queue
 	// checking to avoid memory leak
 	if status, ok := q.jobsStatus[jobID]; ok {

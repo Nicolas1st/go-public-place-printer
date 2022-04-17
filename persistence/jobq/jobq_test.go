@@ -1,12 +1,15 @@
 package jobq
 
 import (
+	"printer/persistence/model"
 	"testing"
 )
 
 func TestEnqueueAndDequeque(t *testing.T) {
 	// create job for testing
-	job := NewJobBuilder()(0, "/path/stuff", "username")
+	jobIDGenerator := newJobIDGenerator()
+	id := jobIDGenerator.newJobID()
+	job := model.NewJob(id, "/path/stuff", "username")
 
 	q := NewJobQueue()
 

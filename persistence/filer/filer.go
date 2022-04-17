@@ -1,4 +1,4 @@
-package fileuploader
+package filer
 
 import (
 	"io"

@@ -2,20 +2,21 @@ package jobs
 
 import (
 	"net/http"
-	"printer/interfaces"
 
 	"github.com/gorilla/mux"
 )
 
-func NewRouter(q interfaces.JobQueue, createJob func() interfaces.Job) *mux.Router {
+func NewRouter(jobq jobqInterface, filer filerInterface) *mux.Router {
+	resourse := NewJobsResource(jobq, filer)
+
 	r := mux.NewRouter()
 
-	r.HandleFunc("/",
-		BuildSubmitJob(q, createJob),
+	r.HandleFunc("/jobs",
+		resourse.SubmitJob,
 	).Methods(http.MethodPost)
 
-	r.HandleFunc("/",
-		BuildCancelJob(q),
+	r.HandleFunc("/jobs",
+		resourse.CancelJob,
 	).Methods(http.MethodDelete)
 
 	return r

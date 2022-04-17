@@ -1,7 +1,9 @@
 package jobs
 
-import "printer/interfaces"
+import (
+	"printer/persistence/model"
+)
 
-type CancelJobRequest struct {
-	ID interfaces.JobID `json:"ID"`
+type cancelJobRequest struct {
+	ID model.JobID `json:"ID"`
 }

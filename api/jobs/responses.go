@@ -1,17 +1,17 @@
 package jobs
 
-import "printer/interfaces"
+import "printer/persistence/model"
 
 type jobField struct {
-	ID interfaces.JobID `json:"jobID"`
+	ID model.JobID `json:"jobID"`
 }
 
-type Response struct {
+type response struct {
 	Job jobField
 }
 
-func NewResponse(jobID interfaces.JobID) Response {
-	return Response{
+func newResponse(jobID model.JobID) response {
+	return response{
 		Job: jobField{ID: jobID},
 	}
 }

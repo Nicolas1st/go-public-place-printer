@@ -2,34 +2,98 @@ package jobs
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
-	"printer/interfaces"
+	"printer/persistence/model"
 )
 
-func BuildSubmitJob(q interfaces.JobQueue, createJob func() interfaces.Job) func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// build job
-		job := createJob()
-		jobID := q.Enqueue(job)
+type jobsResource struct {
+	jobq  jobqInterface
+	filer filerInterface
+}
 
-		// create response
-		responseBody := NewResponse(jobID)
-		json.NewEncoder(w).Encode(responseBody)
+func NewJobsResource(jobq jobqInterface, filer filerInterface) *jobsResource {
+	return &jobsResource{
+		jobq:  jobq,
+		filer: filer,
 	}
 }
 
-func BuildCancelJob(q interfaces.JobQueue) func(http.ResponseWriter, *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// read the request body
-		body := CancelJobRequest{}
-		json.NewDecoder(r.Body).Decode(&body)
+func (resource *jobsResource) SubmitJob(w http.ResponseWriter, r *http.Request) {
+	// for now expecting the user the provide his name in the form
+	username := r.PostFormValue("username")
+	// extract the file form the form
+	file, fileHeader, err := r.FormFile("file")
 
-		err := q.CancelJob(body.ID)
-		if err == nil {
-			json.NewEncoder(w).Encode("Job has been canceled")
-		} else {
-			json.NewEncoder(w).Encode("Job with the id provided does not exist")
-		}
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(struct {
+			ErrorText string
+		}{
+			ErrorText: "Could not extract the file from the form",
+		})
+		return
+	}
 
+	// storing the file
+	filepath, err := resource.filer.StoreFile(file, username, fileHeader.Filename)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(struct {
+			ErrorText string
+		}{
+			ErrorText: "Could not save the file, the error has been logged, try renaming the file",
+		})
+		return
+	}
+
+	// build job
+	job := model.NewJob(filepath, username)
+	jobID := resource.jobq.Enqueue(*job)
+
+	// create response
+	responseBody := NewResponse(jobID)
+	json.NewEncoder(w).Encode(responseBody)
+}
+
+func (resouce *jobsResource) CancelJob(w http.ResponseWriter, r *http.Request) {
+	// parsing the request
+	request := CancelJobRequest{}
+	err := json.NewDecoder(r.Body).Decode(&request)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(struct {
+			ErrorText string
+		}{
+			ErrorText: "Could not parse the json the body of the request",
+		})
+		return
+	}
+
+	err = resouce.jobq.CancelJob(model.JobID(request.ID))
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(struct {
+			ErrorText string
+		}{
+			ErrorText: "Could not parse the json the body of the request",
+		})
+		return
+	}
+
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		json.NewEncoder(w).Encode(struct {
+			ErrorText string
+		}{
+			ErrorText: fmt.Sprint(err),
+		})
+	} else {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(struct {
+			Message string
+		}{
+			Message: "The job has been cancelled",
+		})
 	}
 }

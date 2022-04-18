@@ -55,7 +55,7 @@ func (resource *jobsResource) SubmitJob(w http.ResponseWriter, r *http.Request) 
 	json.NewEncoder(w).Encode(responseBody)
 }
 
-func (resouce *jobsResource) CancelJob(w http.ResponseWriter, r *http.Request) {
+func (resource *jobsResource) CancelJob(w http.ResponseWriter, r *http.Request) {
 	// parsing the request
 	request := cancelJobRequest{}
 	err := json.NewDecoder(r.Body).Decode(&request)
@@ -69,7 +69,7 @@ func (resouce *jobsResource) CancelJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = resouce.jobq.CancelJob(model.JobID(request.ID))
+	err = resource.jobq.CancelJob(model.JobID(request.ID))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(struct {

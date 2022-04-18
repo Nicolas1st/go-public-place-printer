@@ -1,0 +1,12 @@
+{{ define "jobq" }}
+<div>
+    {{ range . }}
+        <div>
+            <p> {{ .ID }} </p>
+            <p> {{ .Status }}</p>
+            <p> {{ .FilePath }}</p>
+            <p> {{ .Username }} </p>
+        </div>
+    {{ end }}
+</div>
+{{ end }}

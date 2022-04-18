@@ -1,33 +1,27 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
-
 	"printer/api/jobs"
-	"printer/interfaces"
-	"printer/job"
-	"printer/jobqueue"
-	"printer/pages"
-	"printer/views"
+	"printer/api/views"
+	"printer/api/views/pages"
+	"printer/persistence/filer"
+	"printer/persistence/jobq"
 )
 
-var host = "localhost:7777"
-
 func main() {
-	q := jobqueue.NewJobQueue()
-	jobsApi := jobs.NewRouter(q,
-		func() interfaces.Job {
-			return &job.Job{}
-		},
-	)
+	server := &http.Server{
+		Addr: "127.0.0.1:8880",
+	}
 
-	templates := pages.NewTemplates("../static/html")
-	views := views.NewRouter(templates)
+	jobq := jobq.NewJobQueue()
+	filer := filer.NewFiler("./files", 2<<30)
 
+	views := views.NewRouter(*pages.NewPages("./web/html"), jobq)
+	http.Handle("/", views)
+
+	jobsApi := jobs.NewRouter(jobq, filer)
 	http.Handle("/jobs", jobsApi)
-	http.Handle("/pages", views)
 
-	fmt.Printf("The server has start on %v\n", host)
-	http.ListenAndServe(host, views)
+	server.ListenAndServe()
 }

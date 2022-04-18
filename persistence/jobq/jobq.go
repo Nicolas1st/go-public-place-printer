@@ -45,7 +45,10 @@ func (q *JobQueue) Dequeue() *model.Job {
 
 // Cancel - cancels job
 func (q *JobQueue) CancelJob(jobID model.JobID) {
-	q.jobsList[jobID].CancelJob()
+	job, ok := q.jobsList[jobID]
+	if ok {
+		job.CancelJob()
+	}
 }
 
 func (q *JobQueue) GetAllJobs() []*model.Job {

@@ -1,23 +1,15 @@
 package jobs
 
-import (
-	"net/http"
+import "net/http"
 
-	"github.com/gorilla/mux"
-)
-
-func NewRouter(jobq jobqInterface, filer filerInterface) *mux.Router {
-	resourse := NewJobsResource(jobq, filer)
-
-	r := mux.NewRouter()
-
-	r.HandleFunc("/jobs",
-		resourse.SubmitJob,
-	).Methods(http.MethodPost)
-
-	r.HandleFunc("/jobs",
-		resourse.CancelJob,
-	).Methods(http.MethodDelete)
-
-	return r
+func NewRouter(jobq jobqInterface, filer filerInterface) http.Handler {
+	resource := NewJobsResource(jobq, filer)
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.Method {
+		case http.MethodPost:
+			resource.SubmitJob(w, r)
+		case http.MethodDelete:
+			resource.CancelJob(w, r)
+		}
+	})
 }

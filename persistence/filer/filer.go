@@ -25,7 +25,8 @@ func (f *filer) StoreFile(uploadedFile io.Reader, username, submittedFilename st
 		return "", err
 	}
 
-	file, err := os.Create(path.Join(pathToStoreFile, submittedFilename))
+	filepath := path.Join(pathToStoreFile, submittedFilename)
+	file, err := os.Create(filepath)
 	if err != nil {
 		return "", err
 	}
@@ -37,7 +38,7 @@ func (f *filer) StoreFile(uploadedFile io.Reader, username, submittedFilename st
 		return "", err
 	}
 
-	return pathToStoreFile, nil
+	return filepath, nil
 }
 
 func (f *filer) RemoveFile(filePath string) error {

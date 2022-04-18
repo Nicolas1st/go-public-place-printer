@@ -14,7 +14,7 @@ func (controller userController) CreateNewUser(w http.ResponseWriter, r *http.Re
 	var submittedData createUserRequestBody
 	json.NewDecoder(r.Body).Decode(&submittedData)
 
-	if err := controller.db.CreateNewUser(submittedData.name, submittedData.passwordHash); err != nil {
+	if err := controller.db.CreateNewUser(submittedData.Name, submittedData.PasswordHash); err != nil {
 		w.WriteHeader(http.StatusNotFound)
 	}
 }

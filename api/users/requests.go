@@ -1,8 +1,8 @@
 package users
 
 type createUserRequestBody struct {
-	name         string `json:"name"`
-	passwordHash string `json:"passwordHash"`
+	Name         string `json:"Name"`
+	PasswordHash string `json:"PasswordHash"`
 }
 
 type deleteUserByIDRequestBody struct {

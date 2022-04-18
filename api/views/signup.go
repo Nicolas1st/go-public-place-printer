@@ -2,7 +2,7 @@ package views
 
 import (
 	"net/http"
-	"printer/web/pages"
+	"printer/api/views/pages"
 )
 
 func BuildSignupView(page *pages.SignupPage) http.HandlerFunc {

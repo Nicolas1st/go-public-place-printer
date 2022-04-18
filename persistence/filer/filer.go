@@ -3,35 +3,41 @@ package filer
 import (
 	"io"
 	"os"
+	"path"
 )
 
 type filer struct {
 	pathToStoreFiles string
-	fileNamer        *FileNamer
+	filePather       *FilePather
 }
 
 func NewFiler(pathToStoreFiles string, maxFileSize int64) *filer {
 	return &filer{
 		pathToStoreFiles: pathToStoreFiles,
-		fileNamer:        newFileNamer(pathToStoreFiles),
+		filePather:       newFilePather(pathToStoreFiles),
 	}
 }
 
-func (f *filer) StoreFile(uploadedFile io.Reader, username, submittedFilename string) (filepath string, err error) {
-	filepath = f.fileNamer.newFilePath(username, submittedFilename)
-
-	file, err := os.Create(filepath)
-	defer file.Close()
+func (f *filer) StoreFile(uploadedFile io.Reader, username, submittedFilename string) (pathToStoreFile string, err error) {
+	pathToStoreFile = f.filePather.newFilePath(username)
+	err = os.MkdirAll(pathToStoreFile, os.ModePerm)
 	if err != nil {
 		return "", err
 	}
+
+	file, err := os.Create(path.Join(pathToStoreFile, submittedFilename))
+	if err != nil {
+		return "", err
+	}
+
+	defer file.Close()
 
 	_, err = io.Copy(file, uploadedFile)
 	if err != nil {
 		return "", err
 	}
 
-	return filepath, nil
+	return pathToStoreFile, nil
 }
 
 func (f *filer) RemoveFile(filePath string) error {

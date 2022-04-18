@@ -15,37 +15,16 @@ func TestEnqueueAndDequeque(t *testing.T) {
 
 	q := NewJobQueue()
 
-	// dequeueing from an empty queue
-	_, err := q.Dequeue()
-	if err == nil {
-		t.Log("Dequeue from an empty queue must result in error")
-		t.Fail()
-	} else {
-		t.Log("Dequeing from empty array was successful")
-	}
-
 	// enqueueing the job
-	jobID := q.Enqueue(*job)
-	status, ok := q.jobsStatus[jobID]
-
-	if !ok {
-		t.Log("When enqueued the job's status must be stored in jobsStatus")
-		t.Fail()
-	}
-
-	if status != toBeDone {
-		t.Log("Just enqueued job must have the status equal to toBeDone")
+	jobID := q.Enqueue(job)
+	if job.Status != model.StatusToBeDone {
+		t.Log("The job must have the status of to be done")
 		t.Fail()
 	}
 
 	// dequeueing the job
 	{
-		job, err := q.Dequeue()
-
-		if err != nil {
-			t.Log("Dequeueing from a non empty array should not result in an error")
-			t.Fail()
-		}
+		job := q.Dequeue()
 
 		if job.ID != jobID {
 			t.Log("ID of enuqued job should not be changed when dequeued")
@@ -53,19 +32,10 @@ func TestEnqueueAndDequeque(t *testing.T) {
 		}
 	}
 
-	// check the queue is empty
-	{
-		_, err := q.Dequeue()
-
-		if err == nil {
-			t.Log("Dequeue from an empty queue must result in error")
-			t.Fail()
-		}
-	}
-
-	// check if the job's status is removed
-	if _, ok := q.jobsStatus[jobID]; ok {
-		t.Log("The status of the job has not been removed, after dequing")
+	// check if the job's status has been removed from the list
+	_, ok := q.jobsList[jobID]
+	if ok {
+		t.Log("Job must be removed from the list, after it was dequeued")
 		t.Fail()
 	}
 

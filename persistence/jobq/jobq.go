@@ -1,74 +1,58 @@
 package jobq
 
 import (
-	"errors"
-	"fmt"
 	"printer/persistence/model"
-)
-
-type jobStatus byte
-
-const (
-	cancelled jobStatus = iota
-	toBeDone
 )
 
 type JobQueue struct {
 	JobIDGenerator *JobIDGenerator
-	jobs           chan model.Job
-	jobsStatus     map[model.JobID]jobStatus // to avoid linear search time
+	queue          chan *model.Job
+	jobsList       map[model.JobID]*model.Job // it's a map to make removal constant time
 }
 
 func NewJobQueue() *JobQueue {
 	return &JobQueue{
 		JobIDGenerator: newJobIDGenerator(),
-		jobs:           make(chan model.Job, 20),
-		jobsStatus:     make(map[model.JobID]jobStatus),
+		queue:          make(chan *model.Job, 20),
+		jobsList:       map[model.JobID]*model.Job{},
 	}
 }
 
-func (q *JobQueue) Enqueue(job model.Job) model.JobID {
+// Enqueue - adds job to the queue
+func (q *JobQueue) Enqueue(job *model.Job) model.JobID {
 	jobID := q.JobIDGenerator.newJobID()
 	job.SetID(jobID)
 
-	// set the status for the job
-	q.jobsStatus[jobID] = toBeDone
-
 	// push the job on to the queue
-	q.jobs <- job
+	q.queue <- job
+
+	// store job for viewing
+	q.jobsList[jobID] = job
 
 	return jobID
 }
 
-func (q *JobQueue) Dequeue() (model.Job, error) {
-	// get the next job
-	// if queue is empty return error
-	// otherwise loop till the job has status not equal to cancelled
+// Dequeue - returns a non empty job, blocks execution when called, if not jobs are available
+func (q *JobQueue) Dequeue() *model.Job {
 	for {
-		select {
-		case job := <-q.jobs:
-			if q.jobsStatus[job.ID] == cancelled {
-				continue
-			}
-
-			delete(q.jobsStatus, job.ID)
-			return job, nil
-		default:
-			return model.Job{}, errors.New("job queue is empty")
+		job := <-q.queue
+		if job.Status != model.StatusCancelled {
+			delete(q.jobsList, job.ID)
+			return job
 		}
 	}
 }
 
-func (q *JobQueue) CancelJob(jobID model.JobID) error {
-	// check if the job is currently in the queue
-	// checking to avoid memory leak
-	if status, ok := q.jobsStatus[jobID]; ok {
-		if status == cancelled {
-			return fmt.Errorf("the job %v had been already been canceled", jobID)
-		}
-		q.jobsStatus[jobID] = cancelled
-		return nil
+// Cancel - cancels job
+func (q *JobQueue) CancelJob(jobID model.JobID) {
+	q.jobsList[jobID].CancelJob()
+}
+
+func (q *JobQueue) GetAllJobs() []*model.Job {
+	jobs := []*model.Job{}
+	for _, v := range q.jobsList {
+		jobs = append(jobs, v)
 	}
 
-	return fmt.Errorf("job with id %v is not in the queue", jobID)
+	return jobs
 }

@@ -48,7 +48,7 @@ func (resource *jobsResource) SubmitJob(w http.ResponseWriter, r *http.Request) 
 
 	// build job
 	job := model.NewJob(filepath, username)
-	jobID := resource.jobq.Enqueue(*job)
+	jobID := resource.jobq.Enqueue(job)
 
 	// create response
 	responseBody := newResponse(jobID)
@@ -69,7 +69,7 @@ func (resource *jobsResource) CancelJob(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	err = resource.jobq.CancelJob(model.JobID(request.ID))
+	resource.jobq.CancelJob(model.JobID(request.ID))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(struct {

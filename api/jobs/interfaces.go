@@ -11,6 +11,6 @@ type filerInterface interface {
 }
 
 type jobqInterface interface {
-	Enqueue(job model.Job) model.JobID
-	CancelJob(jobID model.JobID) error
+	Enqueue(job *model.Job) model.JobID
+	CancelJob(jobID model.JobID)
 }

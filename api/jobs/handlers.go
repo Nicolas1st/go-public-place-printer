@@ -24,7 +24,6 @@ func (resource *jobsResource) SubmitJob(w http.ResponseWriter, r *http.Request) 
 	username := r.PostFormValue("username")
 	// extract the file form the form
 	file, fileHeader, err := r.FormFile("file")
-
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(struct {
@@ -42,7 +41,7 @@ func (resource *jobsResource) SubmitJob(w http.ResponseWriter, r *http.Request) 
 		json.NewEncoder(w).Encode(struct {
 			ErrorText string
 		}{
-			ErrorText: "Could not save the file, the error has been logged, try renaming the file",
+			ErrorText: fmt.Sprint(err),
 		})
 		return
 	}

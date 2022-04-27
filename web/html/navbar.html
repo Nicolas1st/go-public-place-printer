@@ -1,8 +1,19 @@
 {{ define "navbar" }}
-<nav>
-    <ul>
-        <li><a href="#">Login</a></li>
-        <li><a href="#">Logout</a></li>
-    </ul>
-</nav>
+    <nav class="navbar">
+        <h1 class="navbar-title"> 307 <span class="colored-text"> ++ </span> Printer </h1>
+        <div class="navbar-desktop-links">
+            {{ template "links" }}
+        </div>
+
+        <div class="links-menu">
+            <input type="checkbox" class="links-button">
+            <div class="links-menu-bar"></div>
+            <div class="links-menu-bar"></div>
+            <div class="links-menu-bar"></div>
+            <div class="links">
+                {{ template "links" }}
+            </div>
+       </div>
+    </nav>
+    <script src="../js/main.js"></script>
 {{ end }}

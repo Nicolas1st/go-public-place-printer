@@ -11,8 +11,8 @@ type SignupPage struct {
 
 func NewSignupPage(htmlTemplatesPath string) *SignupPage {
 	tmpl := buildTemplate(htmlTemplatesPath, pageInfo{
-		mainTemplateName:  "signup.html",
-		templateFileNames: []string{"signup.html", "navbar.html"},
+		mainTemplateName:  "layout",
+		templateFileNames: []string{"layout.html", "navbar.html", "public-links.html", "signup.html", "footer.html"},
 	})
 
 	return &SignupPage{

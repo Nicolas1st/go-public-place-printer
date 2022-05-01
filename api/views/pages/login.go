@@ -11,8 +11,8 @@ type LoginPage struct {
 
 func NewLoginPage(htmlTemplatesPath string) *LoginPage {
 	tmpl := buildTemplate(htmlTemplatesPath, pageInfo{
-		mainTemplateName:  "login.html",
-		templateFileNames: []string{"login.html", "navbar.html"},
+		mainTemplateName:  "layout",
+		templateFileNames: []string{"layout.html", "navbar.html", "public-links.html", "login.html", "footer.html"},
 	})
 
 	return &LoginPage{

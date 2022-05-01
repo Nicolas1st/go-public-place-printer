@@ -11,8 +11,8 @@ type SubmitFilePage struct {
 
 func NewSubmitFilePage(htmlTemplatesPath string) *SubmitFilePage {
 	tmpl := buildTemplate(htmlTemplatesPath, pageInfo{
-		mainTemplateName:  "submit-file",
-		templateFileNames: []string{"submit_file.html", "navbar.html"},
+		mainTemplateName:  "layout",
+		templateFileNames: []string{"layout.html", "navbar.html", "private-links.html", "submit-file.html", "footer.html"},
 	})
 
 	return &SubmitFilePage{

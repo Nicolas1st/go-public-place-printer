@@ -1,25 +1,20 @@
-{{ define "submit-file" }}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <h1>File submit page</h1>
-    <form action="/jobs" method="post" enctype="multipart/form-data">
-        <div>
-            <label for="username"></label>
-            <input type="text" name="username" id="username">
+{{ define "main" }}
+    <main class="main">
+        <div class="form-container">
+            <h1> Print File </h1>
+            <form action="/jobs" method="post" enctype="multipart/form-data" class="form">
+                <div class="form-fields">
+                    <div class="form-field">
+                        <label for="username" placeholder="this field will be removed in the future"> Username </label>
+                        <input type="text" name="username" id="username">
+                    </div>
+                    <div class="form-field">
+                        <label for="file"> File </label>
+                        <input type="file" name="file" id="file">
+                    </div>
+                </div>
+                <input type="submit" class="form-submit-button">
+            </form>
         </div>
-        <div>
-            <label for="file"></label>
-            <input type="file" name="file" id="file">
-        </div>
-        <input type="submit">
-    </form>
-</body>
-</html>
+    </main>
 {{ end }}

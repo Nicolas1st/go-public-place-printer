@@ -20,6 +20,6 @@ func NewSubmitFilePage(htmlTemplatesPath string) *SubmitFilePage {
 	}
 }
 
-func (page SubmitFilePage) Execute(w http.ResponseWriter, data any) error {
-	return page.tmpl.Execute(w, data)
+func (page SubmitFilePage) Execute(w http.ResponseWriter) error {
+	return page.tmpl.Execute(w, nil)
 }

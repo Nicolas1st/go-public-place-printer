@@ -20,6 +20,6 @@ func NewSignupPage(htmlTemplatesPath string) *SignupPage {
 	}
 }
 
-func (page SignupPage) Execute(w http.ResponseWriter, data any) error {
-	return page.tmpl.Execute(w, data)
+func (page SignupPage) Execute(w http.ResponseWriter) error {
+	return page.tmpl.Execute(w, nil)
 }

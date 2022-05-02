@@ -7,7 +7,7 @@ import (
 
 func BuildSignupView(page *pages.SignupPage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		err := page.Execute(w, struct{ Greeting string }{Greeting: "Hello"})
+		err := page.Execute(w)
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -17,7 +17,7 @@ func BuildSignupView(page *pages.SignupPage) http.HandlerFunc {
 
 func BuildLoginView(page *pages.LoginPage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		err := page.Execute(w, struct{ Greeting string }{Greeting: "Hello"})
+		err := page.Execute(w)
 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)

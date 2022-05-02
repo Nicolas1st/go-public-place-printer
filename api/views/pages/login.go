@@ -20,6 +20,6 @@ func NewLoginPage(htmlTemplatesPath string) *LoginPage {
 	}
 }
 
-func (page LoginPage) Execute(w http.ResponseWriter, data any) error {
-	return page.tmpl.Execute(w, data)
+func (page LoginPage) Execute(w http.ResponseWriter) error {
+	return page.tmpl.Execute(w, nil)
 }

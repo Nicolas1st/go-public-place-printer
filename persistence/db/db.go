@@ -15,8 +15,10 @@ func NewDatabase(dsn string) *Database {
 		panic("Could not connect to the database")
 	}
 
-	db.AutoMigrate(&User{})
-	db.AutoMigrate(&Print{})
+	err = db.AutoMigrate(&User{}, &Print{})
+	if err != nil {
+		panic(err)
+	}
 
 	database := &Database{
 		db: db,

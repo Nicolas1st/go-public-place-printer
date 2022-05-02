@@ -19,7 +19,7 @@ func NewAuthRouter(sessionStorage SessionStorageInterface, database DatabaseInte
 	router := http.NewServeMux()
 
 	router.HandleFunc("/logout", authResource.logout)
-	router.HandleFunc("/authenticate", authResource.authenticate)
+	router.HandleFunc("/login", authResource.authenticate)
 
 	return router
 }

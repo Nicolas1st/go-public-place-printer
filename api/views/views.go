@@ -5,30 +5,27 @@ import (
 	"printer/api/views/pages"
 )
 
-type views struct {
-	jobq       http.HandlerFunc
-	login      http.HandlerFunc
-	signup     http.HandlerFunc
-	submitFile http.HandlerFunc
-}
-
-func newViews(pages pages.Pages, jobq jobqInterface) *views {
-	return &views{
-		jobq:       BuildJobqView(pages.Jobq, jobq),
-		login:      BuildLoginView(pages.Login),
-		signup:     BuildSignupView(pages.Signup),
-		submitFile: BuildSubmitFileView(pages.SubmitFile),
-	}
-}
-
-func NewRouter(pages pages.Pages, jobq jobqInterface) *http.ServeMux {
-	views := newViews(pages, jobq)
+func NewAdminViews(pages pages.Pages, jobq jobqInterface) *http.ServeMux {
 	router := http.NewServeMux()
 
-	router.HandleFunc("/login", views.login)
-	router.HandleFunc("/signup", views.signup)
-	router.HandleFunc("/submit-file", views.submitFile)
-	router.HandleFunc("/jobq", views.jobq)
+	router.HandleFunc("/jobq", BuildJobqView(pages.Jobq, jobq))
+
+	return router
+}
+
+func NewPublicViews(pages pages.Pages) *http.ServeMux {
+	router := http.NewServeMux()
+
+	router.HandleFunc("/login", BuildLoginView(pages.Login))
+	router.HandleFunc("/signup", BuildSignupView(pages.Signup))
+
+	return router
+}
+
+func NewPrivateViews(pages pages.Pages) *http.ServeMux {
+	router := http.NewServeMux()
+
+	router.HandleFunc("/submit-file", BuildSubmitFileView(pages.SubmitFile))
 
 	return router
 }

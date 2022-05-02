@@ -32,3 +32,10 @@ func (wrapper *Database) GetUserByID(id uint) (User, error) {
 
 	return user, result.Error
 }
+
+func (wrapper *Database) GetUserByName(username string) (*User, error) {
+	user := User{}
+	result := wrapper.db.Where("Name = ?", username).First(&user)
+
+	return &user, result.Error
+}

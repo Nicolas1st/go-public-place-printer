@@ -1,8 +1,10 @@
 package db
 
-func (wrapper *Database) CreateNewUser(name, hashedPassword string) error {
+// CreateNewUser - creates new user, if it's not possible an error value is returned
+func (wrapper *Database) CreateNewUser(name, email, hashedPassword string) error {
 	user := User{
 		Name:         name,
+		Email:        email,
 		PasswordHash: hashedPassword,
 	}
 

@@ -1,11 +1,18 @@
 package middlewares
 
 import (
+	"context"
 	"net/http"
 	"printer/api/auth"
+	"printer/persistence/model"
 )
 
+type contextSessionKey string
+
+var ContextSessionKey contextSessionKey = "contextSessionKey"
+
 type SessionStorageInterface interface {
+	GetSessionByToken(sessionToken string) (*model.Session, error)
 }
 
 // OnlyAuthenticated - prevents non-authenticated users from making requests to certain enpoints (parameter next)
@@ -21,8 +28,14 @@ func OnlyAuthenticated(sessionStorage SessionStorageInterface, next *http.ServeM
 			return
 		}
 
-		// checking whether the session for the cookie provied is valid
-		if sessionStorage.IsSessionValid(cookie.Value) {
+		// extracing the session
+		session, err := sessionStorage.GetSessionByToken(cookie.Value)
+
+		// in case of error the session is considered to be non-existsent
+		if err != nil {
+			// storing the session in the context
+			r = r.WithContext(context.WithValue(r.Context(), ContextSessionKey, session))
+
 			next.ServeHTTP(w, r)
 			return
 		}

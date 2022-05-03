@@ -20,28 +20,22 @@ type SessionStorageInterface interface {
 // and the validity of the session
 func OnlyAuthenticated(sessionStorage SessionStorageInterface, next *http.ServeMux, redirectTo http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		cookie, err := r.Cookie(auth.AuthCookieName)
-
 		// check if auth cookie is present
+		cookie, err := r.Cookie(auth.AuthCookieName)
 		if err != nil {
 			redirectTo(w, r)
 			return
 		}
 
-		// extracing the session
+		// checking whether a valid sesion exists for the provided
 		session, err := sessionStorage.GetSessionByToken(cookie.Value)
-
-		// in case of error the session is considered to be non-existsent
 		if err != nil {
-			// storing the session in the context
-			r = r.WithContext(context.WithValue(r.Context(), ContextSessionKey, session))
-
-			next.ServeHTTP(w, r)
-			return
+			redirectTo(w, r)
 		}
 
-		// redirect to another view if user is not authenticated
-		redirectTo(w, r)
+		// storing the session in the context
+		r = r.WithContext(context.WithValue(r.Context(), ContextSessionKey, session))
+		next.ServeHTTP(w, r)
 	}
 }
 
@@ -49,12 +43,13 @@ func OnlyAuthenticated(sessionStorage SessionStorageInterface, next *http.ServeM
 // based on whether the auth cookie is present
 func OnlyAnonymous(next *http.ServeMux, redirectTo http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, cookieNotPresentErr := r.Cookie(auth.AuthCookieName)
+		_, err := r.Cookie(auth.AuthCookieName)
 
-		// redirect to another view if cookie is present
-		if cookieNotPresentErr == nil {
+		if err == nil {
+			// non authenticated don't have auth cookie
 			redirectTo(w, r)
 		} else {
+			// authenticated users have one
 			next.ServeHTTP(w, r)
 		}
 	}

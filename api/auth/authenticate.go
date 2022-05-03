@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	"net/http"
 	"printer/persistence/model"
 
@@ -9,7 +8,6 @@ import (
 )
 
 func (resource *AuthResource) authenticate(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("hit authenticate")
 	username := r.PostFormValue("username")
 	password := r.PostFormValue("password")
 
@@ -27,7 +25,7 @@ func (resource *AuthResource) authenticate(w http.ResponseWriter, r *http.Reques
 	}
 
 	// create session
-	session := model.NewSession(user.ID)
+	session := model.NewSession(user.ID, user.Name)
 
 	// store session in memory
 	token, expiryTime := resource.sessionStorage.StoreSession(session)

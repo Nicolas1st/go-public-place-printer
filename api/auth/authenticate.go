@@ -32,9 +32,10 @@ func (resource *AuthResource) authenticate(w http.ResponseWriter, r *http.Reques
 
 	// set session cookie in the user's browser
 	http.SetCookie(w, &http.Cookie{
-		Name:    AuthCookieName,
-		Value:   token,
-		Path:    CookiePath,
-		Expires: expiryTime,
+		Name:     AuthCookieName,
+		Value:    token,
+		Path:     CookiePath,
+		Expires:  expiryTime,
+		HttpOnly: true,
 	})
 }

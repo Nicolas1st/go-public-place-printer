@@ -17,9 +17,10 @@ func (resource *AuthResource) logout(w http.ResponseWriter, r *http.Request) {
 
 	// removing the session in the browser
 	http.SetCookie(w, &http.Cookie{
-		Name:    AuthCookieName,
-		Value:   "",
-		Path:    CookiePath,
-		Expires: time.Now(),
+		Name:     AuthCookieName,
+		Value:    "",
+		Path:     CookiePath,
+		Expires:  time.Now(),
+		HttpOnly: true,
 	})
 }

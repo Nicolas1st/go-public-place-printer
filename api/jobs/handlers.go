@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"printer/api/middlewares"
 	"printer/persistence/model"
 )
 
@@ -21,7 +22,17 @@ func NewJobsResource(jobq jobqInterface, filer filerInterface) *jobsResource {
 
 func (resource *jobsResource) SubmitJob(w http.ResponseWriter, r *http.Request) {
 	// for now expecting the user the provide his name in the form
-	username := r.PostFormValue("username")
+	var session *model.Session
+	switch v := r.Context().Value(middlewares.ContextSessionKey).(type) {
+	case *model.Session:
+		session = v
+	default:
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	username := session.Username
+
 	// extract the file form the form
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {

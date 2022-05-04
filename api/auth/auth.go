@@ -14,12 +14,17 @@ func newAuthResource(sessionStorage SessionStorageInterface, database DatabaseIn
 	}
 }
 
-func NewAuthRouter(sessionStorage SessionStorageInterface, database DatabaseInterface) *http.ServeMux {
+func NewAuthRouter(
+	sessionStorage SessionStorageInterface,
+	database DatabaseInterface,
+	redirectToOnLogin http.HandlerFunc,
+	redirectToOnLogout http.HandlerFunc,
+) *http.ServeMux {
 	authResource := newAuthResource(sessionStorage, database)
-	router := http.NewServeMux()
 
-	router.HandleFunc("/logout", authResource.logout)
-	router.HandleFunc("/login", authResource.authenticate)
+	router := http.NewServeMux()
+	router.HandleFunc("/login", authResource.buildAuthenticate(redirectToOnLogin))
+	router.HandleFunc("/logout", authResource.buildLogout(redirectToOnLogout))
 
 	return router
 }

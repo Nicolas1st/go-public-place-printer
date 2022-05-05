@@ -1,7 +1,9 @@
 package db
 
+import "printer/persistence/model"
+
 func (wrapper *Database) SetUsersPagesPerMonth(id uint, pagesPerMonth int) error {
-	user := User{}
+	user := model.User{}
 
 	if result := wrapper.db.First(user, id); result.Error != nil {
 		return result.Error
@@ -16,7 +18,7 @@ func (wrapper *Database) SetUsersPagesPerMonth(id uint, pagesPerMonth int) error
 }
 
 func (wrapper *Database) AllowUserToUserPrinter(id uint) error {
-	user := User{}
+	user := model.User{}
 
 	if result := wrapper.db.First(user, id); result.Error != nil {
 		return result.Error
@@ -31,7 +33,7 @@ func (wrapper *Database) AllowUserToUserPrinter(id uint) error {
 }
 
 func (wrapper *Database) ForbidUsingPrinter(id uint) error {
-	user := User{}
+	user := model.User{}
 
 	if result := wrapper.db.First(user, id); result.Error != nil {
 		return result.Error

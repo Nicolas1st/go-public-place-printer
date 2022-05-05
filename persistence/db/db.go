@@ -1,6 +1,8 @@
 package db
 
 import (
+	"printer/persistence/model"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -15,7 +17,7 @@ func NewDatabase(dsn string) *Database {
 		panic("Could not connect to the database")
 	}
 
-	err = db.AutoMigrate(&User{}, &Print{})
+	err = db.AutoMigrate(&model.User{}, &model.Print{})
 	if err != nil {
 		panic(err)
 	}

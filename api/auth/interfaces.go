@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"printer/persistence/db"
 	"printer/persistence/model"
 	"time"
 )
@@ -12,5 +11,5 @@ type SessionStorageInterface interface {
 }
 
 type DatabaseInterface interface {
-	GetUserByName(username string) (*db.User, error)
+	GetUserByName(username string) (*model.User, error)
 }

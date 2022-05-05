@@ -1,14 +1,17 @@
 package db
 
-import "time"
+import (
+	"printer/persistence/model"
+	"time"
+)
 
-func (wrapper *Database) GetNumberOfPagesPrinterByUser(userID uint) (int, error) {
-	user := User{}
+func (wrapper *Database) GetNumberOfPagesPrintedByUser(userID uint) (int, error) {
+	user := model.User{}
 	if result := wrapper.db.First(user, userID); result.Error != nil {
 		return 0, result.Error
 	}
 
-	prints := []Print{}
+	prints := []model.Print{}
 	wrapper.db.Model(&user).Association("Languages").Find(&prints)
 
 	var pagesPrinted int

@@ -31,23 +31,14 @@ func main() {
 	files := http.FileServer(http.Dir("../web"))
 	http.Handle("/static/", http.StripPrefix("/static/", files))
 
-	// build middlewares for http handlers
-	onlyAuth := middlewares.BuildOnlyAuthenticatedMiddleware(
-		sessionStorage,
-		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte("Redirect to page for non authenticated users"))
-		},
-	)
-
-	onlyNotAuth := middlewares.BuildOnlyAnonymousMiddleware(
-		func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte("Redirect to page for authenticated users"))
-		},
-	)
-
-	// setting up views
+	// creating views
 	views := views.NewViews("../web/html")
 
+	// build middlewares for http handlers
+	onlyAuth := middlewares.BuildOnlyAuthenticatedMiddleware(sessionStorage, views.Login)
+	onlyNotAuth := middlewares.BuildOnlyAnonymousMiddleware(views.SubmitFile)
+
+	// setting up views
 	// not protected routes
 	http.HandleFunc("/", onlyNotAuth(views.Login))
 	http.HandleFunc("/login", onlyNotAuth(views.Login))

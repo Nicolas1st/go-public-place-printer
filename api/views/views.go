@@ -5,27 +5,17 @@ import (
 	"printer/api/views/pages"
 )
 
-func NewAdminViews(pages *pages.Pages, jobq jobqInterface) *http.ServeMux {
-	router := http.NewServeMux()
-
-	router.HandleFunc("/jobq", BuildJobqView(pages.Jobq, jobq))
-
-	return router
+type Views struct {
+	Login      http.HandlerFunc
+	Signup     http.HandlerFunc
+	SubmitFile http.HandlerFunc
 }
 
-func NewPublicViews(pages *pages.Pages) *http.ServeMux {
-	router := http.NewServeMux()
-
-	router.HandleFunc("/login", BuildLoginView(pages.Login))
-	router.HandleFunc("/signup", BuildSignupView(pages.Signup))
-
-	return router
-}
-
-func NewPrivateViews(pages *pages.Pages) *http.ServeMux {
-	router := http.NewServeMux()
-
-	router.HandleFunc("/submit-file", BuildSubmitFileView(pages.SubmitFile))
-
-	return router
+func NewViews(htmlTemplatesPath string) *Views {
+	pages := pages.NewPages(htmlTemplatesPath)
+	return &Views{
+		Login:      BuildLoginView(pages.Login),
+		Signup:     BuildSignupView(pages.Signup),
+		SubmitFile: BuildSubmitFileView(pages.SubmitFile),
+	}
 }

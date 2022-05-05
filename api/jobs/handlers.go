@@ -3,6 +3,7 @@ package jobs
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"printer/api/middlewares"
 	"printer/persistence/model"
@@ -42,6 +43,18 @@ func (resource *jobsResource) SubmitJob(w http.ResponseWriter, r *http.Request) 
 		}{
 			ErrorText: "Could not extract the file from the form",
 		})
+		return
+	}
+
+	// check whether the file is pdf
+	bytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	mimeType := http.DetectContentType(bytes)
+	if mimeType != "application/pdf" {
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 

@@ -8,15 +8,15 @@ import (
 )
 
 func NewRouter(db *db.Database) *mux.Router {
+	// api dependencies
+	controller := userController{db: db}
+
+	// api router
 	r := mux.NewRouter()
 
-	controller := userController{}
-
-	r.HandleFunc("/", controller.GetUserByID).Methods(http.MethodGet)
+	r.HandleFunc("/{id:[0-9]+}", controller.GetUser).Methods(http.MethodGet)
 	r.HandleFunc("/", controller.GetAllUsers).Methods(http.MethodGet)
-
-	r.HandleFunc("/", controller.DeleteUserByID).Methods(http.MethodDelete)
-	r.HandleFunc("/", controller.GetAllUsers).Methods(http.MethodGet)
+	r.HandleFunc("/{id:[0-9]+}", controller.DeleteUser).Methods(http.MethodDelete)
 
 	return r
 }

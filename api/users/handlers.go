@@ -3,47 +3,53 @@ package users
 import (
 	"encoding/json"
 	"net/http"
-	"printer/persistence/db"
+	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 type userController struct {
-	db *db.Database
+	db databaseInterface
 }
 
-func (controller userController) CreateNewUser(w http.ResponseWriter, r *http.Request) {
-	var submittedData createUserRequestBody
-	json.NewDecoder(r.Body).Decode(&submittedData)
-
-	if err := controller.db.CreateNewUser(submittedData.Name, submittedData.PasswordHash); err != nil {
-		w.WriteHeader(http.StatusNotFound)
-	}
-}
-
-func (controller userController) DeleteUserByID(w http.ResponseWriter, r *http.Request) {
-	var submittedData deleteUserByIDRequestBody
-	json.NewDecoder(r.Body).Decode(&submittedData)
-
-	err := controller.db.DeleteUserByID(submittedData.UID)
+// GetUser - return one user if id is provided
+func (controller userController) GetUser(w http.ResponseWriter, r *http.Request) {
+	// retrieveing id param from the url
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
+		w.WriteHeader(http.StatusBadRequest)
+		return
 	}
-}
 
-func (controller userController) GetAllUsers(w http.ResponseWriter, r *http.Request) {
-	users := controller.db.GetAllUsers()
-
-	json.NewEncoder(w).Encode(users)
-}
-
-func (controller userController) GetUserByID(w http.ResponseWriter, r *http.Request) {
-	var submittedData getUserByIDRequestBody
-	json.NewDecoder(r.Body).Decode(&submittedData)
-
-	user, err := controller.db.GetUserByID(submittedData.UID)
+	user, err := controller.db.GetUserByID(uint(id))
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
 
 	json.NewEncoder(w).Encode(user)
+}
+
+// GetAllUsers - returns all users
+func (controller userController) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	users := controller.db.GetAllUsers()
+
+	json.NewEncoder(w).Encode(users)
+}
+
+// DeleteUser - deletes one user if id is provided
+func (controller userController) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	// retrieveing id param from the url
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = controller.db.DeleteUserByID(uint(id))
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+	}
 }

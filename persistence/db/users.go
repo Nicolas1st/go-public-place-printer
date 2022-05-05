@@ -25,7 +25,7 @@ func (wrapper *Database) DeleteUserByID(id uint) error {
 // GetUserByID - retrieve one user by id
 func (wrapper *Database) GetUserByID(id uint) (*model.User, error) {
 	user := model.User{}
-	result := wrapper.db.First(user, id)
+	result := wrapper.db.First(&user, id)
 
 	return &user, result.Error
 }
@@ -41,7 +41,7 @@ func (wrapper *Database) GetUserByName(username string) (*model.User, error) {
 // GetAllUsers - retrieves all users from database
 func (wrapper *Database) GetAllUsers() []model.User {
 	users := []model.User{}
-	wrapper.db.Find(users)
+	wrapper.db.Find(&users)
 
 	return users
 }

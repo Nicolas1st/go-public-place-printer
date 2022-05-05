@@ -15,29 +15,33 @@ func (wrapper *Database) CreateNewUser(name, email, hashedPassword string) error
 	return result.Error
 }
 
+// DeleteUserByID - deletes user by id
 func (wrapper *Database) DeleteUserByID(id uint) error {
 	result := wrapper.db.Delete(&model.User{}, id)
 
 	return result.Error
 }
 
-func (wrapper *Database) GetAllUsers() []model.User {
-	users := []model.User{}
-	wrapper.db.Find(users)
-
-	return users
-}
-
-func (wrapper *Database) GetUserByID(id uint) (model.User, error) {
+// GetUserByID - retrieve one user by id
+func (wrapper *Database) GetUserByID(id uint) (*model.User, error) {
 	user := model.User{}
 	result := wrapper.db.First(user, id)
 
-	return user, result.Error
+	return &user, result.Error
 }
 
+// GetUserByName - retrieve one user by name
 func (wrapper *Database) GetUserByName(username string) (*model.User, error) {
 	user := model.User{}
 	result := wrapper.db.Where("Name = ?", username).First(&user)
 
 	return &user, result.Error
+}
+
+// GetAllUsers - retrieves all users from database
+func (wrapper *Database) GetAllUsers() []model.User {
+	users := []model.User{}
+	wrapper.db.Find(users)
+
+	return users
 }

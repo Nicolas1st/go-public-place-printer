@@ -2,10 +2,10 @@ package db
 
 import "printer/persistence/model"
 
-func (wrapper *Database) SetUsersPagesPerMonth(id uint, pagesPerMonth int) error {
+func (wrapper *Database) SetPagesPerMonth(userID uint, pagesPerMonth int) error {
 	user := model.User{}
 
-	if result := wrapper.db.First(user, id); result.Error != nil {
+	if result := wrapper.db.First(&user, userID); result.Error != nil {
 		return result.Error
 	}
 
@@ -17,10 +17,10 @@ func (wrapper *Database) SetUsersPagesPerMonth(id uint, pagesPerMonth int) error
 	return nil
 }
 
-func (wrapper *Database) AllowUserToUserPrinter(id uint) error {
+func (wrapper *Database) AllowUsingPrinter(userID uint) error {
 	user := model.User{}
 
-	if result := wrapper.db.First(user, id); result.Error != nil {
+	if result := wrapper.db.First(&user, userID); result.Error != nil {
 		return result.Error
 	}
 
@@ -32,14 +32,14 @@ func (wrapper *Database) AllowUserToUserPrinter(id uint) error {
 	return nil
 }
 
-func (wrapper *Database) ForbidUsingPrinter(id uint) error {
+func (wrapper *Database) ForbidUsingPrinter(userID uint) error {
 	user := model.User{}
 
-	if result := wrapper.db.First(user, id); result.Error != nil {
+	if result := wrapper.db.First(&user, userID); result.Error != nil {
 		return result.Error
 	}
 
-	user.CanUsePrinter = true
+	user.CanUsePrinter = false
 	if result := wrapper.db.Save(&user); result.Error != nil {
 		return result.Error
 	}

@@ -53,3 +53,61 @@ func (controller userController) DeleteUser(w http.ResponseWriter, r *http.Reque
 		w.WriteHeader(http.StatusNotFound)
 	}
 }
+
+// SetUsersPagesPerMonth - sets number of pages a user can print per month
+func (controller userController) SetUsersPagesPerMonth(w http.ResponseWriter, r *http.Request) {
+	// retrieveing userID param from the url
+	vars := mux.Vars(r)
+
+	userID, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// retrieving the number of pages from request body
+	var body struct {
+		NumberOfPages int
+	}
+
+	json.NewDecoder(r.Body).Decode(&body)
+
+	err = controller.db.SetPagesPerMonth(uint(userID), body.NumberOfPages)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+	}
+}
+
+// AllowUsingPrinter - allows specified user to user printer,
+// provided his page limit per month is not exceeded
+func (controller userController) AllowUsingPrinter(w http.ResponseWriter, r *http.Request) {
+	// retrieveing id param from the url
+	vars := mux.Vars(r)
+	userID, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = controller.db.AllowUsingPrinter(uint(userID))
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+	}
+}
+
+// ForbidUsingPrinter - allows specified user to user printer,
+// provided his page limit per month is not exceeded
+func (controller userController) ForbidUsingPrinter(w http.ResponseWriter, r *http.Request) {
+	// retrieveing id param from the url
+	vars := mux.Vars(r)
+	userID, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = controller.db.ForbidUsingPrinter(uint(userID))
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+	}
+}

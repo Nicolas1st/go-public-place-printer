@@ -1,0 +1,100 @@
+.user-manager {
+    background-color: darkcyan;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    padding: 30px;
+    border-radius: 30px;
+    gap: 24px;
+
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.user-name {
+  font-size: 27px;
+}
+
+.user-info {
+  font-size: 20px;
+}
+
+
+.user-manager::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.user-manager {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.user {
+    background-color: darkslategray;
+    height: fit-content;
+    width: 100%;
+    padding: 20px;
+
+    border-radius: 15px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.user-managment {
+  display: flex;
+  gap: 30px;
+}
+
+.user-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.user-button {
+  height: 40px;
+  width: 150px;
+  color: black;
+  font-size: 18px;
+  border: none;
+  border-radius: 8px;
+}
+
+.user-allow-printing {
+  background-color: yellowgreen;
+}
+
+.user-forbid-printing {
+  background-color: orange;
+}
+
+.user-details {
+  height: 100%;
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: gray;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.users {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.user-controls {
+  padding: 10px;
+  border-radius: 10px;
+  width: min-content;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background-color: gray;
+}

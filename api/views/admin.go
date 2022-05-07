@@ -20,3 +20,13 @@ func BuildJobqView(page *pages.JobqPage, jobq jobqInterface) http.HandlerFunc {
 		}
 	}
 }
+
+func BuildUserManagerView(page *pages.UserManagerPage) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		err := page.Execute(w)
+
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+	}
+}

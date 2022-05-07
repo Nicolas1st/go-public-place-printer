@@ -6,16 +6,18 @@ import (
 )
 
 type Views struct {
-	Login      http.HandlerFunc
-	Signup     http.HandlerFunc
-	SubmitFile http.HandlerFunc
+	Login       http.HandlerFunc
+	Signup      http.HandlerFunc
+	SubmitFile  http.HandlerFunc
+	UserManager http.HandlerFunc
 }
 
 func NewViews(htmlTemplatesPath string) *Views {
 	pages := pages.NewPages(htmlTemplatesPath)
 	return &Views{
-		Login:      BuildLoginView(pages.Login),
-		Signup:     BuildSignupView(pages.Signup),
-		SubmitFile: BuildSubmitFileView(pages.SubmitFile),
+		Login:       BuildLoginView(pages.Login),
+		Signup:      BuildSignupView(pages.Signup),
+		SubmitFile:  BuildSubmitFileView(pages.SubmitFile),
+		UserManager: BuildUserManagerView(pages.UserManager),
 	}
 }

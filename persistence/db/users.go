@@ -8,6 +8,7 @@ func (wrapper *Database) CreateNewUser(name, email, hashedPassword string) error
 		Name:         name,
 		Email:        email,
 		PasswordHash: hashedPassword,
+		Role:         model.NonAdmin,
 	}
 
 	result := wrapper.db.Create(&user)

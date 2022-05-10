@@ -17,11 +17,11 @@ type SessionStorageInterface interface {
 
 type Middleware func(http.HandlerFunc) http.HandlerFunc
 
-// BuildOnlyAuthenticatedMiddleware - build middelware that
+// BuildOnlyAuth - build middelware that
 // prevents non-authenticated users from making requests to certain enpoints (parameter next)
 // based on whether the auth cookie is present
 // and the validity of the session
-func BuildOnlyAuthenticatedMiddleware(sessionStorage SessionStorageInterface, redirectTo http.HandlerFunc) Middleware {
+func BuildOnlyAuth(sessionStorage SessionStorageInterface, redirectTo http.HandlerFunc) Middleware {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			// check if auth cookie is present
@@ -38,6 +38,11 @@ func BuildOnlyAuthenticatedMiddleware(sessionStorage SessionStorageInterface, re
 				return
 			}
 
+			if session.IsExpired() {
+				redirectTo(w, r)
+				return
+			}
+
 			// storing the session in the context
 			r = r.WithContext(context.WithValue(r.Context(), ContextSessionKey, session))
 			next.ServeHTTP(w, r)
@@ -45,10 +50,10 @@ func BuildOnlyAuthenticatedMiddleware(sessionStorage SessionStorageInterface, re
 	}
 }
 
-// BuildOnlyAnonymousMiddleware - builds middleware that
+// BuildOnlyNotAuth - builds middleware that
 // prevents authenticated users from making requests to certain enpoints (parameter next)
 // based on whether the auth cookie is present
-func BuildOnlyAnonymousMiddleware(redirectTo http.HandlerFunc) Middleware {
+func BuildOnlyNotAuth(redirectTo http.HandlerFunc) Middleware {
 	return func(next http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			_, err := r.Cookie(auth.AuthCookieName)

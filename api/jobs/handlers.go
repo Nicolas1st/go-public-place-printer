@@ -2,34 +2,27 @@ package jobs
 
 import (
 	"encoding/json"
-	"fmt"
+	"errors"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"printer/api/middlewares"
 	"printer/persistence/model"
 )
 
-type jobsResource struct {
+type jobsDependencies struct {
 	jobq  jobqInterface
 	filer filerInterface
 }
 
-func NewJobsResource(jobq jobqInterface, filer filerInterface) *jobsResource {
-	return &jobsResource{
-		jobq:  jobq,
-		filer: filer,
-	}
-}
-
-func (resource *jobsResource) SubmitJob(w http.ResponseWriter, r *http.Request) {
+func (resource *jobsDependencies) SubmitJob(w http.ResponseWriter, r *http.Request) error {
 	// for now expecting the user the provide his name in the form
 	var session *model.Session
 	switch v := r.Context().Value(middlewares.ContextSessionKey).(type) {
 	case *model.Session:
 		session = v
 	default:
-		w.WriteHeader(http.StatusUnauthorized)
-		return
+		return errors.New("could not retrieve value from the context")
 	}
 
 	username := session.Username
@@ -37,86 +30,47 @@ func (resource *jobsResource) SubmitJob(w http.ResponseWriter, r *http.Request) 
 	// extract the file form the form
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(struct {
-			ErrorText string
-		}{
-			ErrorText: "Could not extract the file from the form",
-		})
-		return
+		return errors.New("no file found in the submitted form")
 	}
 
 	// check whether the file is pdf
 	bytes, err := ioutil.ReadAll(file)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
+		return errors.New("could not read the file")
 	}
 	mimeType := http.DetectContentType(bytes)
 	if mimeType != "application/pdf" {
-		w.WriteHeader(http.StatusBadRequest)
-		return
+		return errors.New("wrong file format, the printer can only work with pdf files")
 	}
 
 	// storing the file
+	_, err = file.Seek(0, io.SeekStart)
+	if err != nil {
+		return errors.New("could not read the file")
+	}
+
 	filepath, err := resource.filer.StoreFile(file, username, fileHeader.Filename)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(struct {
-			ErrorText string
-		}{
-			ErrorText: fmt.Sprint(err),
-		})
-		return
+		return errors.New("could not store the file")
 	}
 
 	// build job
-	job := model.NewJob(filepath, username)
-	jobID := resource.jobq.Enqueue(job)
+	job := model.NewJob(filepath, fileHeader.Filename, username)
+	resource.jobq.Enqueue(job)
 
-	// create response
-	responseBody := newResponse(jobID)
-	json.NewEncoder(w).Encode(responseBody)
+	return nil
 }
 
-func (resource *jobsResource) CancelJob(w http.ResponseWriter, r *http.Request) {
-	// parsing the request
-	request := cancelJobRequest{}
-	err := json.NewDecoder(r.Body).Decode(&request)
+func (resource *jobsDependencies) CancelJob(w http.ResponseWriter, r *http.Request) error {
+	var cancelJobRequest struct {
+		ID model.JobID `json:"ID"`
+	}
+	err := json.NewDecoder(r.Body).Decode(&cancelJobRequest)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(struct {
-			ErrorText string
-		}{
-			ErrorText: "Could not parse the json the body of the request",
-		})
-		return
+		return errors.New("bad request, try again")
 	}
 
-	resource.jobq.CancelJob(model.JobID(request.ID))
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(struct {
-			ErrorText string
-		}{
-			ErrorText: "Could not parse the json the body of the request",
-		})
-		return
-	}
+	resource.jobq.CancelJob(model.JobID(cancelJobRequest.ID))
 
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(struct {
-			ErrorText string
-		}{
-			ErrorText: fmt.Sprint(err),
-		})
-	} else {
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(struct {
-			Message string
-		}{
-			Message: "The job has been cancelled",
-		})
-	}
+	return nil
 }

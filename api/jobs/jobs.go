@@ -2,15 +2,19 @@ package jobs
 
 import "net/http"
 
-func NewRouter(jobq jobqInterface, filer filerInterface) http.HandlerFunc {
-	resource := NewJobsResource(jobq, filer)
+type JobsHandlers struct {
+	SubmitJob func(w http.ResponseWriter, r *http.Request) error
+	CancelJob func(w http.ResponseWriter, r *http.Request) error
+}
 
-	return func(w http.ResponseWriter, r *http.Request) {
-		switch r.Method {
-		case http.MethodPost:
-			resource.SubmitJob(w, r)
-		case http.MethodDelete:
-			resource.CancelJob(w, r)
-		}
+func NewJobsHandlers(jobq jobqInterface, filer filerInterface) *JobsHandlers {
+	jobsDependenices := &jobsDependencies{
+		jobq:  jobq,
+		filer: filer,
+	}
+
+	return &JobsHandlers{
+		SubmitJob: jobsDependenices.SubmitJob,
+		CancelJob: jobsDependenices.CancelJob,
 	}
 }

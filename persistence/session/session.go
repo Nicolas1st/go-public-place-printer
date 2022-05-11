@@ -20,6 +20,8 @@ func NewSessionStorage() *SessionStorage {
 	}
 }
 
+// purgeFromExpiredSessions - purges storage from already expired sessions
+// that were not yet removed explicitly
 func (storage *SessionStorage) purgeFromExpiredSessions() {
 	for token, session := range storage.sessions {
 		if session.IsExpired() {
@@ -28,6 +30,9 @@ func (storage *SessionStorage) purgeFromExpiredSessions() {
 	}
 }
 
+// StoreSession - stores session in the storage,
+// before storing a new one, the function purges
+// already expires sessions
 func (storage *SessionStorage) StoreSession(session *model.Session) (string, time.Time) {
 	// to avoid memory leaks the session are being purged
 	// It's done every expiry perdiod of one cookies elapses
@@ -58,6 +63,7 @@ func (storage *SessionStorage) StoreSession(session *model.Session) (string, tim
 	return sessionToken, session.ExpiresAt
 }
 
+// RemoveSession - removes session associated with the provided token from the storage
 func (storage *SessionStorage) RemoveSession(sessionToken string) {
 	delete(storage.sessions, sessionToken)
 }
@@ -67,11 +73,6 @@ func (storage *SessionStorage) RemoveSession(sessionToken string) {
 func (storage *SessionStorage) GetSessionByToken(sessionToken string) (*model.Session, error) {
 	session, exists := storage.sessions[sessionToken]
 	if !exists {
-		return &model.Session{}, errors.New("session does not exist")
-	}
-
-	if session.IsExpired() {
-		storage.RemoveSession(sessionToken)
 		return &model.Session{}, errors.New("session does not exist")
 	}
 

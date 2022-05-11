@@ -6,6 +6,7 @@ import (
 	"printer/api/jobs"
 	"printer/api/middlewares"
 	"printer/api/register"
+	"printer/api/users"
 	"printer/api/views"
 	"printer/persistence/db"
 	"printer/persistence/filer"
@@ -16,16 +17,20 @@ import (
 
 func main() {
 	// config
-	server := &http.Server{
-		Addr: "127.0.0.1:8880",
-	}
+	server := &http.Server{Addr: "127.0.0.1:8880"}
 	dsn := "host=localhost user=postgres password=password dbname=stuff port=5432 sslmode=disable"
 
 	// persistence layer
 	db := db.NewDatabase(dsn)
 	jobq := jobq.NewJobQueue()
-	filer := filer.NewFiler("../files", 2<<30)
+	// filer := filer.NewFiler("../files", 2<<30)
+	filer := filer.NewFiler("/home/nicolas/Desktop/printer-app/files", 2<<32)
 	sessionStorage := session.NewSessionStorage()
+	authHandlers := auth.NewAuthHandlers(sessionStorage, db)
+
+	// init middlewares
+	requireAuth := middlewares.BuildRequireAuth(authHandlers.GetSessionIfValid, "/")
+	requireNotAuth := middlewares.BuildRequireNotAuth(authHandlers.GetSessionIfValid, "/submit-file")
 
 	// serving static files
 	files := http.FileServer(http.Dir("../web"))
@@ -34,39 +39,36 @@ func main() {
 	// creating views
 	views := views.NewViews("../web/html")
 
-	// build middlewares for http handlers
-	onlyAuth := middlewares.BuildOnlyAuthenticatedMiddleware(sessionStorage, views.Login)
-	onlyNotAuth := middlewares.BuildOnlyAnonymousMiddleware(views.SubmitFile)
+	// authenication
+	loginRedirector := middlewares.BuildRedirectOnRequest("/", "/")
+	http.HandleFunc("/auth/login", requireNotAuth(loginRedirector(authHandlers.Login)))
 
-	// setting up views
-	// not protected routes
-	http.HandleFunc("/", onlyNotAuth(views.Login))
-	http.HandleFunc("/login", onlyNotAuth(views.Login))
-	http.HandleFunc("/signup", onlyNotAuth(views.Signup))
+	logoutRedirector := middlewares.BuildRedirectOnRequest("/", "/")
+	http.HandleFunc("/auth/logout", requireAuth(logoutRedirector(authHandlers.Logout)))
 
-	// protected routes
-	http.HandleFunc("/submit-file", onlyAuth(views.SubmitFile))
+	// set up views
+	http.HandleFunc("/", requireNotAuth(views.Login))
+	http.HandleFunc("/login", requireNotAuth(views.Login))
+	http.HandleFunc("/signup", requireNotAuth(views.Signup))
+	http.HandleFunc("/submit-file", requireAuth(views.SubmitFile))
+	http.HandleFunc("/user-manager", requireAuth(views.UserManager))
 
-	// jobs api to submit files to be printed
-	jobsApi := jobs.NewRouter(jobq, filer)
-	http.Handle("/jobs", onlyAuth(jobsApi))
+	// set up jobs api routes
+	jobsHandlers := jobs.NewJobsHandlers(jobq, filer)
+
+	RedirectOnJobResult := middlewares.BuildRedirectOnRequest("/submit-file", "/user-manager")
+	http.HandleFunc("/jobs/submission", requireAuth(RedirectOnJobResult(jobsHandlers.SubmitJob)))
+	http.HandleFunc("/jobs/cancellation", requireAuth(RedirectOnJobResult(jobsHandlers.SubmitJob)))
 
 	// registration
-	userController := register.UserController{
-		DB: db,
-	}
-	http.HandleFunc("/register", userController.CreateNewUser)
+	redirectOnRegisterResult := middlewares.BuildRedirectOnRequest("/login", "/signup")
+	userController := register.UserController{DB: db}
+	http.HandleFunc("/register", requireNotAuth(redirectOnRegisterResult(userController.CreateNewUser)))
 
-	// authenication
-	auth := auth.NewAuthRouter(
-		sessionStorage,
-		db,
-		views.SubmitFile,
-		views.Login,
-	)
-	http.Handle("/auth/", http.StripPrefix("/auth", auth))
+	usersApi := users.NewRouter(db)
+	http.Handle("/users/", http.StripPrefix("/users", usersApi))
 
-	worker := worker.NewWorker(jobq, filer)
+	worker := worker.NewWorker(jobq, filer, db)
 	worker.Start()
 
 	server.ListenAndServe()

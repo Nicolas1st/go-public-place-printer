@@ -22,3 +22,10 @@ func (wrapper *Database) SavePrint(username, submittedFileName, storedFileName s
 
 	return nil
 }
+
+func (wrapper *Database) GetAllPrintsByUID(UID uint) []model.Print {
+	var prints []model.Print
+	wrapper.db.Where(model.Print{UserID: UID}).Find(&prints)
+
+	return prints
+}

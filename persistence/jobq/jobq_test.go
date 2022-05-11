@@ -10,7 +10,7 @@ func TestEnqueueAndDequeque(t *testing.T) {
 	jobIDGenerator := newJobIDGenerator()
 	id := jobIDGenerator.newJobID()
 
-	job := model.NewJob("/path/stuff", "username")
+	job := model.NewJob("/path/stuff", "stuff", "username")
 	job.SetID(id)
 
 	q := NewJobQueue()

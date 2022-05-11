@@ -6,9 +6,9 @@ import (
 	"printer/persistence/model"
 )
 
-var ContextSessionKey contextSessionKey = "contextSessionKey"
-
 type contextSessionKey string
+
+var ContextSessionKey contextSessionKey = "contextSessionKey"
 
 // RequireAuth - builds middelware that
 // prevents non-authenticated users from making requests to `next` handler

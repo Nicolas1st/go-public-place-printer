@@ -31,7 +31,7 @@ func (controller UserController) CreateNewUser(w http.ResponseWriter, r *http.Re
 	// creating new user
 	err = controller.DB.CreateNewUser(username, email, string(passwordHash))
 
-	// abort if it was possible to create the user account
+	// abort if it was not possible to create the user account
 	if err != nil {
 		return err
 	}

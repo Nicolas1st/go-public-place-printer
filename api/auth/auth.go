@@ -1,30 +1,30 @@
 package auth
 
-import "net/http"
+import (
+	"net/http"
+	"printer/persistence/model"
+)
 
-type AuthResource struct {
+type authDependencies struct {
 	sessionStorage SessionStorageInterface
 	database       DatabaseInterface
 }
 
-func newAuthResource(sessionStorage SessionStorageInterface, database DatabaseInterface) *AuthResource {
-	return &AuthResource{
+type AuthHandlers struct {
+	Login             func(w http.ResponseWriter, r *http.Request) error
+	Logout            func(w http.ResponseWriter, r *http.Request) error
+	GetSessionIfValid func(w http.ResponseWriter, r *http.Request) (*model.Session, bool)
+}
+
+func NewAuthHandlers(sessionStorage SessionStorageInterface, database DatabaseInterface) *AuthHandlers {
+	authDependencies := &authDependencies{
 		sessionStorage: sessionStorage,
 		database:       database,
 	}
-}
 
-func NewAuthRouter(
-	sessionStorage SessionStorageInterface,
-	database DatabaseInterface,
-	redirectToOnLogin http.HandlerFunc,
-	redirectToOnLogout http.HandlerFunc,
-) *http.ServeMux {
-	authResource := newAuthResource(sessionStorage, database)
-
-	router := http.NewServeMux()
-	router.HandleFunc("/login", authResource.buildAuthenticate(redirectToOnLogin))
-	router.HandleFunc("/logout", authResource.buildLogout(redirectToOnLogout))
-
-	return router
+	return &AuthHandlers{
+		Login:             authDependencies.Authenticate,
+		Logout:            authDependencies.Logout,
+		GetSessionIfValid: authDependencies.GetSessionIfValid,
+	}
 }

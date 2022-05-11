@@ -26,7 +26,7 @@ func (resource *authDependencies) Authenticate(w http.ResponseWriter, r *http.Re
 	}
 
 	// create session
-	session := model.NewSession(user.ID, user.Name)
+	session := model.NewSession(user, user.Name)
 
 	// store session in memory
 	token, expiryTime := resource.sessionStorage.StoreSession(session)

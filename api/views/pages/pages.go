@@ -6,6 +6,7 @@ type Pages struct {
 	SubmitFile  *SubmitFilePage
 	Jobq        *JobqPage
 	UserManager *UserManagerPage
+	Profile     *ProfilePage
 }
 
 // NewPages prebuilds all templates, for them to later be used only for
@@ -16,5 +17,6 @@ func NewPages(htmlTemplatesPath string) *Pages {
 		SubmitFile:  NewSubmitFilePage(htmlTemplatesPath),
 		Jobq:        NewJobqPage(htmlTemplatesPath),
 		UserManager: NewUserManagerPage(htmlTemplatesPath),
+		Profile:     NewProfilePage(htmlTemplatesPath),
 	}
 }

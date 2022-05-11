@@ -1,0 +1,21 @@
+{{ define "main" }}
+    <main class="main">
+        <div class="form-container">
+            <div>
+                <h2> Files printed by the user </h2>
+                <!-- <p> {{ .Prints }} </p> -->
+                {{ range .Prints }}
+                    <p> {{ . }} </p>
+                {{ end }}
+            </div>
+            <div>
+                <h2> User Info </h2>
+                <!-- <p> {{ .User }} </p> -->
+                <p> Name {{ .User.Name }} </p>
+                <p> Email {{ .User.Email }} </p>
+                <p> Role {{ .User.Role }} </p>
+                <p> CanUsePrinter {{ .User.CanUsePrinter }} </p>
+            </div>
+        </div>
+    </main>
+{{ end }}

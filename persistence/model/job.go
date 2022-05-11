@@ -10,17 +10,19 @@ const (
 type JobID uint
 
 type Job struct {
-	ID       JobID
-	FilePath string
-	Username string
-	Status   JobStatus
+	ID                JobID
+	SubmittedFileName string
+	StoredFilePath    string
+	Username          string
+	Status            JobStatus
 }
 
-func NewJob(filepath, username string) *Job {
+func NewJob(storedFilePath, submittedFileName, username string) *Job {
 	return &Job{
-		FilePath: filepath,
-		Username: username,
-		Status:   StatusToBeDone,
+		StoredFilePath:    storedFilePath,
+		SubmittedFileName: submittedFileName,
+		Username:          username,
+		Status:            StatusToBeDone,
 	}
 }
 

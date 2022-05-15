@@ -1,23 +1,20 @@
 package jobq
 
-import (
-	"printer/persistence/model"
-	"testing"
-)
+import "testing"
 
 func TestEnqueueAndDequeque(t *testing.T) {
 	// create job for testing
 	jobIDGenerator := newJobIDGenerator()
 	id := jobIDGenerator.newJobID()
 
-	job := model.NewJob("/path/stuff", "stuff", "username")
+	job := NewJob("/path/stuff", "stuff", "username")
 	job.SetID(id)
 
 	q := NewJobQueue()
 
 	// enqueueing the job
 	jobID := q.Enqueue(job)
-	if job.Status != model.StatusToBeDone {
+	if job.Status != StatusToBeDone {
 		t.Log("The job must have the status of to be done")
 		t.Fail()
 	}

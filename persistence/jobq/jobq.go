@@ -1,25 +1,21 @@
 package jobq
 
-import (
-	"printer/persistence/model"
-)
-
 type JobQueue struct {
 	JobIDGenerator *JobIDGenerator
-	queue          chan *model.Job
-	jobsList       map[model.JobID]*model.Job // it's a map to make removal constant time
+	queue          chan *Job
+	jobsList       map[JobID]*Job // it's a map to make removal constant time
 }
 
 func NewJobQueue() *JobQueue {
 	return &JobQueue{
 		JobIDGenerator: newJobIDGenerator(),
-		queue:          make(chan *model.Job, 20),
-		jobsList:       map[model.JobID]*model.Job{},
+		queue:          make(chan *Job, 20),
+		jobsList:       map[JobID]*Job{},
 	}
 }
 
 // Enqueue - adds job to the queue
-func (q *JobQueue) Enqueue(job *model.Job) model.JobID {
+func (q *JobQueue) Enqueue(job *Job) JobID {
 	jobID := q.JobIDGenerator.newJobID()
 	job.SetID(jobID)
 
@@ -33,10 +29,10 @@ func (q *JobQueue) Enqueue(job *model.Job) model.JobID {
 }
 
 // Dequeue - returns a non empty job, blocks execution when called, if not jobs are available
-func (q *JobQueue) Dequeue() *model.Job {
+func (q *JobQueue) Dequeue() *Job {
 	for {
 		job := <-q.queue
-		if job.Status != model.StatusCancelled {
+		if job.Status != StatusCancelled {
 			delete(q.jobsList, job.ID)
 			return job
 		}
@@ -44,15 +40,15 @@ func (q *JobQueue) Dequeue() *model.Job {
 }
 
 // Cancel - cancels job
-func (q *JobQueue) CancelJob(jobID model.JobID) {
+func (q *JobQueue) CancelJob(jobID JobID) {
 	job, ok := q.jobsList[jobID]
 	if ok {
 		job.CancelJob()
 	}
 }
 
-func (q *JobQueue) GetAllJobs() []*model.Job {
-	jobs := []*model.Job{}
+func (q *JobQueue) GetAllJobs() []*Job {
+	jobs := []*Job{}
 	for _, v := range q.jobsList {
 		jobs = append(jobs, v)
 	}

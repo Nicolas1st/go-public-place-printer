@@ -1,4 +1,4 @@
-package model
+package jobq
 
 type JobStatus int
 

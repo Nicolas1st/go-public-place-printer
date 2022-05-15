@@ -1,9 +1,7 @@
 package jobq
 
-import "printer/persistence/model"
-
 type JobIDGenerator struct {
-	nextJobID model.JobID
+	nextJobID JobID
 }
 
 func newJobIDGenerator() *JobIDGenerator {
@@ -12,7 +10,7 @@ func newJobIDGenerator() *JobIDGenerator {
 	}
 }
 
-func (g *JobIDGenerator) newJobID() model.JobID {
+func (g *JobIDGenerator) newJobID() JobID {
 	jobID := g.nextJobID
 	g.nextJobID++
 

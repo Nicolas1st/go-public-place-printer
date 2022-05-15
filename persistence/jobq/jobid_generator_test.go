@@ -1,14 +1,11 @@
 package jobq
 
-import (
-	"printer/persistence/model"
-	"testing"
-)
+import "testing"
 
 func TestJobIDUniqness(t *testing.T) {
 	gen := newJobIDGenerator()
 
-	usedIDs := map[model.JobID]bool{}
+	usedIDs := map[JobID]bool{}
 	for i := 0; i < 10; i++ {
 		id := gen.newJobID()
 

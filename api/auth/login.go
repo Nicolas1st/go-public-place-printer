@@ -25,8 +25,6 @@ func (resource *authController) Authenticate(w http.ResponseWriter, r *http.Requ
 
 	// create session
 	session := model.NewSession(user, user.Name)
-
-	// store session in memory
 	token, expiryTime := resource.sessions.StoreSession(session)
 
 	// set session cookie in the user's browser

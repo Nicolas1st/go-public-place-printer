@@ -12,10 +12,10 @@ func (resource *authController) Logout(w http.ResponseWriter, r *http.Request) e
 		return nil
 	}
 
-	// removing the session by token
+	// remove session on the server
 	resource.sessions.RemoveSession(cookie.Value)
 
-	// removing the session in the browser
+	// remove session cookie in the browser
 	removeAuthCookie(w)
 
 	return nil

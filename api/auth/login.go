@@ -8,12 +8,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (resource *authController) Authenticate(w http.ResponseWriter, r *http.Request) error {
+func (c *authController) Authenticate(w http.ResponseWriter, r *http.Request) error {
 	username := r.PostFormValue("username")
 	password := r.PostFormValue("password")
 
 	// check if user exists
-	user, err := resource.db.GetUserByName(username)
+	user, err := c.db.GetUserByName(username)
 	if err != nil {
 		return errors.New("not user found with the name specified")
 	}
@@ -25,7 +25,7 @@ func (resource *authController) Authenticate(w http.ResponseWriter, r *http.Requ
 
 	// create session
 	session := model.NewSession(user, user.Name)
-	token, expiryTime := resource.sessions.StoreSession(session)
+	token, expiryTime := c.sessions.StoreSession(session)
 
 	// set session cookie in the user's browser
 	setAuthCookie(w, token, expiryTime)

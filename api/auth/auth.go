@@ -6,19 +6,19 @@ import (
 	"time"
 )
 
-type SessionStorageInterface interface {
+type SessionStorage interface {
 	StoreSession(session *model.Session) (string, time.Time)
 	RemoveSession(sessionToken string)
 	GetSessionByToken(sessionToken string) (*model.Session, error)
 }
 
-type DatabaseInterface interface {
+type Database interface {
 	GetUserByName(username string) (*model.User, error)
 }
 
-type authDependencies struct {
-	sessionStorage SessionStorageInterface
-	database       DatabaseInterface
+type authController struct {
+	sessions SessionStorage
+	db       Database
 }
 
 type AuthHandlers struct {
@@ -27,15 +27,9 @@ type AuthHandlers struct {
 	GetSessionIfValid func(w http.ResponseWriter, r *http.Request) (*model.Session, bool)
 }
 
-func NewAuthHandlers(sessionStorage SessionStorageInterface, database DatabaseInterface) *AuthHandlers {
-	authDependencies := &authDependencies{
-		sessionStorage: sessionStorage,
-		database:       database,
-	}
-
-	return &AuthHandlers{
-		Login:             authDependencies.Authenticate,
-		Logout:            authDependencies.Logout,
-		GetSessionIfValid: authDependencies.GetSessionIfValid,
+func NewController(sessions SessionStorage, db Database) *authController {
+	return &authController{
+		sessions: sessions,
+		db:       db,
 	}
 }

@@ -2,7 +2,7 @@ package auth
 
 import "net/http"
 
-func (resource *authDependencies) Logout(w http.ResponseWriter, r *http.Request) error {
+func (resource *authController) Logout(w http.ResponseWriter, r *http.Request) error {
 	cookie, err := r.Cookie(AuthCookieName)
 	if err == http.ErrNoCookie {
 		w.WriteHeader(http.StatusOK)
@@ -10,7 +10,7 @@ func (resource *authDependencies) Logout(w http.ResponseWriter, r *http.Request)
 	}
 
 	// removing the session by token
-	resource.sessionStorage.RemoveSession(cookie.Value)
+	resource.sessions.RemoveSession(cookie.Value)
 
 	// removing the session in the browser
 	RemoveAuthCookie(w, r)

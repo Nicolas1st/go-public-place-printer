@@ -16,7 +16,7 @@ func GetSessionToken(w http.ResponseWriter, r *http.Request) (sessionToken strin
 	return sessionToken, noTokenErr
 }
 
-func (resource *authDependencies) GetSessionIfValid(w http.ResponseWriter, r *http.Request) (session *model.Session, valid bool) {
+func (resource *authController) GetSessionIfValid(w http.ResponseWriter, r *http.Request) (session *model.Session, valid bool) {
 	// check if user has the auth cookie
 	sessionToken, noTokenErr := GetSessionToken(w, r)
 	if noTokenErr != nil {
@@ -24,7 +24,7 @@ func (resource *authDependencies) GetSessionIfValid(w http.ResponseWriter, r *ht
 	}
 
 	// check whether there is corresponding session in server's memory
-	session, noSessionErr := resource.sessionStorage.GetSessionByToken(sessionToken)
+	session, noSessionErr := resource.sessions.GetSessionByToken(sessionToken)
 	if noSessionErr != nil {
 		// remove cookie if there is no correspoding session on the server
 		RemoveAuthCookie(w, r)
@@ -36,7 +36,7 @@ func (resource *authDependencies) GetSessionIfValid(w http.ResponseWriter, r *ht
 		// remove cookie if the session is expired
 		RemoveAuthCookie(w, r)
 		// remove the session in the storage
-		resource.sessionStorage.RemoveSession(sessionToken)
+		resource.sessions.RemoveSession(sessionToken)
 		return session, false
 	}
 

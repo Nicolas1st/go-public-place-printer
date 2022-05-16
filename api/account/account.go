@@ -2,16 +2,16 @@ package account
 
 import "printer/persistence/model"
 
-type Database interface {
+type database interface {
 	GetUserByName(username string) (*model.User, error)
 	GetUserByEmail(email string) (*model.User, error)
 	CreateNewUser(username, email, password string) error
 }
 
 type accountController struct {
-	db Database
+	db database
 }
 
-func NewController(db Database) *accountController {
+func NewController(db database) *accountController {
 	return &accountController{db: db}
 }

@@ -5,9 +5,9 @@ import (
 	"printer/persistence/model"
 )
 
-func GetSessionToken(w http.ResponseWriter, r *http.Request) (sessionToken string, noTokenErr error) {
+func getSessionToken(w http.ResponseWriter, r *http.Request) (sessionToken string, noTokenErr error) {
 	// check if user has the auth cookie
-	cookie, noTokenErr := r.Cookie(AuthCookieName)
+	cookie, noTokenErr := r.Cookie(authCookieName)
 	if noTokenErr != nil {
 		return "", noTokenErr
 	}
@@ -18,7 +18,7 @@ func GetSessionToken(w http.ResponseWriter, r *http.Request) (sessionToken strin
 
 func (resource *authController) GetSessionIfValid(w http.ResponseWriter, r *http.Request) (session *model.Session, valid bool) {
 	// check if user has the auth cookie
-	sessionToken, noTokenErr := GetSessionToken(w, r)
+	sessionToken, noTokenErr := getSessionToken(w, r)
 	if noTokenErr != nil {
 		return &model.Session{}, false
 	}
@@ -27,14 +27,14 @@ func (resource *authController) GetSessionIfValid(w http.ResponseWriter, r *http
 	session, noSessionErr := resource.sessions.GetSessionByToken(sessionToken)
 	if noSessionErr != nil {
 		// remove cookie if there is no correspoding session on the server
-		RemoveAuthCookie(w)
+		removeAuthCookie(w)
 		return session, false
 	}
 
 	// check for expiration
 	if session.IsExpired() {
 		// remove cookie if the session is expired
-		RemoveAuthCookie(w)
+		removeAuthCookie(w)
 		// remove the session in the storage
 		resource.sessions.RemoveSession(sessionToken)
 		return session, false

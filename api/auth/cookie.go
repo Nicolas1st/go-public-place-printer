@@ -5,24 +5,24 @@ import (
 	"time"
 )
 
-const AuthCookieName string = "auth_session_cookie"
-const CookiePath string = "/"
+const authCookieName string = "auth_session_cookie"
+const cookiePath string = "/"
 
-func SetAuthCookie(w http.ResponseWriter, token string, expiryTime time.Time) {
+func setAuthCookie(w http.ResponseWriter, token string, expiryTime time.Time) {
 	http.SetCookie(w, &http.Cookie{
-		Name:     AuthCookieName,
+		Name:     authCookieName,
 		Value:    token,
-		Path:     CookiePath,
+		Path:     cookiePath,
 		Expires:  expiryTime,
 		HttpOnly: true,
 	})
 }
 
-func RemoveAuthCookie(w http.ResponseWriter) {
+func removeAuthCookie(w http.ResponseWriter) {
 	http.SetCookie(w, &http.Cookie{
-		Name:     AuthCookieName,
+		Name:     authCookieName,
 		Value:    "",
-		Path:     CookiePath,
+		Path:     cookiePath,
 		Expires:  time.Now(),
 		HttpOnly: true,
 	})

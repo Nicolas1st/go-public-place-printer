@@ -1,27 +1,26 @@
 package auth
 
 import (
-	"net/http"
 	"printer/persistence/model"
 	"time"
 )
 
-type SessionStorage interface {
+type sessionStorage interface {
 	StoreSession(session *model.Session) (string, time.Time)
 	RemoveSession(sessionToken string)
 	GetSessionByToken(sessionToken string) (*model.Session, error)
 }
 
-type Database interface {
+type database interface {
 	GetUserByName(username string) (*model.User, error)
 }
 
 type authController struct {
-	sessions SessionStorage
-	db       Database
+	sessions sessionStorage
+	db       database
 }
 
-func NewController(sessions SessionStorage, db Database) *authController {
+func NewController(sessions sessionStorage, db database) *authController {
 	return &authController{
 		sessions: sessions,
 		db:       db,

@@ -3,7 +3,7 @@ package auth
 import "net/http"
 
 func (resource *authController) Logout(w http.ResponseWriter, r *http.Request) error {
-	cookie, err := r.Cookie(AuthCookieName)
+	cookie, err := r.Cookie(authCookieName)
 	if err == http.ErrNoCookie {
 		w.WriteHeader(http.StatusOK)
 		return nil
@@ -13,7 +13,7 @@ func (resource *authController) Logout(w http.ResponseWriter, r *http.Request) e
 	resource.sessions.RemoveSession(cookie.Value)
 
 	// removing the session in the browser
-	RemoveAuthCookie(w)
+	removeAuthCookie(w)
 
 	return nil
 }

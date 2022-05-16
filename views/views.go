@@ -2,7 +2,8 @@ package views
 
 import (
 	"net/http"
-	"printer/api/views/pages"
+	"printer/config"
+	"printer/views/pages"
 )
 
 type Views struct {
@@ -10,16 +11,46 @@ type Views struct {
 	Signup      http.HandlerFunc
 	SubmitFile  http.HandlerFunc
 	UserManager http.HandlerFunc
-	Profile     http.HandlerFunc
 }
 
-func NewViews(htmlTemplatesPath string, database DatabaseInterface) *Views {
-	pages := pages.NewPages(htmlTemplatesPath)
+func NewViews(htmlTemplatesPath string, endpoints config.Endpoints) *Views {
+	pages := pages.NewPages(htmlTemplatesPath, endpoints)
 	return &Views{
 		Login:       BuildLoginView(pages.Login),
 		Signup:      BuildSignupView(pages.Signup),
 		SubmitFile:  BuildSubmitFileView(pages.SubmitFile),
 		UserManager: BuildUserManagerView(pages.UserManager),
-		Profile:     BuildProfileView(pages.Profile, database),
+	}
+}
+
+func BuildLoginView(page *pages.Page) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if err := page.Execute(w, nil); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+	}
+}
+
+func BuildSignupView(page *pages.Page) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if err := page.Execute(w, nil); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+	}
+}
+
+func BuildSubmitFileView(page *pages.Page) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if err := page.Execute(w, nil); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
+	}
+}
+
+func BuildUserManagerView(page *pages.Page) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if err := page.Execute(w, nil); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 	}
 }

@@ -12,6 +12,6 @@ type accountController struct {
 	db Database
 }
 
-func NewAccountController(db Database) *accountController {
+func NewController(db Database) *accountController {
 	return &accountController{db: db}
 }

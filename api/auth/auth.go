@@ -21,12 +21,6 @@ type authController struct {
 	db       Database
 }
 
-type AuthHandlers struct {
-	Login             func(w http.ResponseWriter, r *http.Request) error
-	Logout            func(w http.ResponseWriter, r *http.Request) error
-	GetSessionIfValid func(w http.ResponseWriter, r *http.Request) (*model.Session, bool)
-}
-
 func NewController(sessions SessionStorage, db Database) *authController {
 	return &authController{
 		sessions: sessions,

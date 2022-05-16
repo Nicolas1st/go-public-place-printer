@@ -8,7 +8,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (c *authController) Authenticate(w http.ResponseWriter, r *http.Request) error {
+func (c *authController) Login(w http.ResponseWriter, r *http.Request) error {
 	username := r.PostFormValue("username")
 	password := r.PostFormValue("password")
 

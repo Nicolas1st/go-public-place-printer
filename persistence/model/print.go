@@ -8,5 +8,5 @@ type Print struct {
 	StoredFileName    string `gorm:"unique"`
 	NumberOfPages     int
 	UserID            uint
-	User              User
+	User              User `gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 }

@@ -11,10 +11,10 @@ const (
 
 type User struct {
 	gorm.Model
-	Name          string `gorm:"unique"`
-	Email         string `gorm:"unique"`
-	Role          Role
-	PasswordHash  string
-	PagesPerMonth int  `gorm:"default:100"`
-	CanUsePrinter bool `gorm:"default:true"`
+	Name          string `gorm:"unique;size:128;not null"`
+	Email         string `gorm:"unique;size:128;not null"`
+	Role          Role   `gorm:"not null"`
+	PasswordHash  string `gorm:"not null"`
+	PagesPerMonth int    `gorm:"default:100"`
+	CanUsePrinter bool   `gorm:"default:true"`
 }

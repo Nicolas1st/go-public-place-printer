@@ -3,53 +3,52 @@ package views
 import (
 	"net/http"
 	"printer/config"
-	"printer/views/pages"
 )
 
-type Views struct {
+type views struct {
 	Login       http.HandlerFunc
 	Signup      http.HandlerFunc
 	SubmitFile  http.HandlerFunc
 	UserManager http.HandlerFunc
 }
 
-func NewViews(htmlTemplatesPath string, endpoints config.Endpoints) *Views {
-	pages := pages.NewPages(htmlTemplatesPath, endpoints)
-	return &Views{
-		Login:       BuildLoginView(pages.Login),
-		Signup:      BuildSignupView(pages.Signup),
-		SubmitFile:  BuildSubmitFileView(pages.SubmitFile),
-		UserManager: BuildUserManagerView(pages.UserManager),
+func NewViews(htmlTemplatesPath string, endpoints config.Endpoints) *views {
+	pages := newPages(htmlTemplatesPath, endpoints)
+	return &views{
+		Login:       buildLoginView(pages.Login),
+		Signup:      buildSignupView(pages.Signup),
+		SubmitFile:  buildSubmitFileView(pages.SubmitFile),
+		UserManager: buildUserManagerView(pages.UserManager),
 	}
 }
 
-func BuildLoginView(page *pages.Page) http.HandlerFunc {
+func buildLoginView(p *page) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if err := page.Execute(w, nil); err != nil {
+		if err := p.execute(w, nil); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 	}
 }
 
-func BuildSignupView(page *pages.Page) http.HandlerFunc {
+func buildSignupView(p *page) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if err := page.Execute(w, nil); err != nil {
+		if err := p.execute(w, nil); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 	}
 }
 
-func BuildSubmitFileView(page *pages.Page) http.HandlerFunc {
+func buildSubmitFileView(p *page) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if err := page.Execute(w, nil); err != nil {
+		if err := p.execute(w, nil); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 	}
 }
 
-func BuildUserManagerView(page *pages.Page) http.HandlerFunc {
+func buildUserManagerView(p *page) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if err := page.Execute(w, nil); err != nil {
+		if err := p.execute(w, nil); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 	}

@@ -1,18 +1,18 @@
-package pages
+package views
 
 import "printer/config"
 
 type pages struct {
-	Login       *Page
-	Signup      *Page
-	SubmitFile  *Page
-	Jobq        *Page
-	UserManager *Page
-	Profile     *Page
+	Login       *page
+	Signup      *page
+	SubmitFile  *page
+	Jobq        *page
+	UserManager *page
+	Profile     *page
 }
 
-// NewPages prebuilds all templates, for them to later be used only for
-func NewPages(htmlTemplatesPath string, endpoints config.Endpoints) *pages {
+// newPages prebuilds all templates, for them to later be used only for
+func newPages(htmlTemplatesPath string, endpoints config.Endpoints) *pages {
 	templateToExecute := "layout"
 
 	commonPublicTemplates := []string{"layout.html", "navbar.html", "public-links.html", "footer.html"}

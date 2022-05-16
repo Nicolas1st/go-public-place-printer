@@ -2,12 +2,13 @@ package auth
 
 import (
 	"net/http"
+	"printer/config"
 	"printer/persistence/model"
 )
 
 func getSessionToken(w http.ResponseWriter, r *http.Request) (sessionToken string, noTokenErr error) {
 	// check if user has the auth cookie
-	cookie, noTokenErr := r.Cookie(authCookieName)
+	cookie, noTokenErr := r.Cookie(config.AuthCookieName)
 	if noTokenErr != nil {
 		return "", noTokenErr
 	}

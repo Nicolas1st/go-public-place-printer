@@ -2,17 +2,15 @@ package auth
 
 import (
 	"net/http"
+	"printer/config"
 	"time"
 )
 
-const authCookieName string = "auth_session_cookie"
-const cookiePath string = "/"
-
 func setAuthCookie(w http.ResponseWriter, token string, expiryTime time.Time) {
 	http.SetCookie(w, &http.Cookie{
-		Name:     authCookieName,
+		Name:     config.AuthCookieName,
 		Value:    token,
-		Path:     cookiePath,
+		Path:     config.AuthCookiePath,
 		Expires:  expiryTime,
 		HttpOnly: true,
 	})
@@ -20,9 +18,9 @@ func setAuthCookie(w http.ResponseWriter, token string, expiryTime time.Time) {
 
 func removeAuthCookie(w http.ResponseWriter) {
 	http.SetCookie(w, &http.Cookie{
-		Name:     authCookieName,
+		Name:     config.AuthCookieName,
 		Value:    "",
-		Path:     cookiePath,
+		Path:     config.AuthCookiePath,
 		Expires:  time.Now(),
 		HttpOnly: true,
 	})

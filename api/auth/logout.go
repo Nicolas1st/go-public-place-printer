@@ -5,18 +5,15 @@ import (
 	"printer/config"
 )
 
-func (c *authController) Logout(w http.ResponseWriter, r *http.Request) error {
+func (c *authController) Logout(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie(config.AuthCookieName)
-	if err == http.ErrNoCookie {
-		w.WriteHeader(http.StatusOK)
-		return nil
+	if err != http.ErrNoCookie {
+		// remove session on the server
+		c.sessions.RemoveSession(cookie.Value)
+
+		// remove session cookie in the browser
+		removeAuthCookie(w)
 	}
 
-	// remove session on the server
-	c.sessions.RemoveSession(cookie.Value)
-
-	// remove session cookie in the browser
-	removeAuthCookie(w)
-
-	return nil
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }

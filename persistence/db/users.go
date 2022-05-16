@@ -68,6 +68,14 @@ func (wrapper *Database) GetUserByName(username string) (*model.User, error) {
 	return &user, result.Error
 }
 
+// GetUserByEmail - retrieve one user by email
+func (wrapper *Database) GetUserByEmail(email string) (*model.User, error) {
+	user := model.User{}
+	result := wrapper.db.Where("Email = ?", email).First(&user)
+
+	return &user, result.Error
+}
+
 // GetAllUsers - retrieves all users from database
 func (wrapper *Database) GetAllUsers() []model.User {
 	users := []model.User{}

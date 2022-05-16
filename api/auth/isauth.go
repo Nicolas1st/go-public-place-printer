@@ -27,14 +27,14 @@ func (resource *authController) GetSessionIfValid(w http.ResponseWriter, r *http
 	session, noSessionErr := resource.sessions.GetSessionByToken(sessionToken)
 	if noSessionErr != nil {
 		// remove cookie if there is no correspoding session on the server
-		RemoveAuthCookie(w, r)
+		RemoveAuthCookie(w)
 		return session, false
 	}
 
 	// check for expiration
 	if session.IsExpired() {
 		// remove cookie if the session is expired
-		RemoveAuthCookie(w, r)
+		RemoveAuthCookie(w)
 		// remove the session in the storage
 		resource.sessions.RemoveSession(sessionToken)
 		return session, false

@@ -13,7 +13,7 @@ func (resource *authController) Logout(w http.ResponseWriter, r *http.Request) e
 	resource.sessions.RemoveSession(cookie.Value)
 
 	// removing the session in the browser
-	RemoveAuthCookie(w, r)
+	RemoveAuthCookie(w)
 
 	return nil
 }

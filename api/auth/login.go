@@ -30,7 +30,7 @@ func (resource *authController) Authenticate(w http.ResponseWriter, r *http.Requ
 	token, expiryTime := resource.sessions.StoreSession(session)
 
 	// set session cookie in the user's browser
-	SetAuthCookie(w, r, token, expiryTime)
+	SetAuthCookie(w, token, expiryTime)
 
 	return nil
 }

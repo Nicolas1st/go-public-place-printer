@@ -8,7 +8,7 @@ import (
 const AuthCookieName string = "auth_session_cookie"
 const CookiePath string = "/"
 
-func SetAuthCookie(w http.ResponseWriter, r *http.Request, token string, expiryTime time.Time) {
+func SetAuthCookie(w http.ResponseWriter, token string, expiryTime time.Time) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     AuthCookieName,
 		Value:    token,
@@ -18,7 +18,7 @@ func SetAuthCookie(w http.ResponseWriter, r *http.Request, token string, expiryT
 	})
 }
 
-func RemoveAuthCookie(w http.ResponseWriter, r *http.Request) {
+func RemoveAuthCookie(w http.ResponseWriter) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     AuthCookieName,
 		Value:    "",

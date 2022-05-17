@@ -4,42 +4,26 @@ import (
 	"net/http"
 	"printer/config"
 	"printer/persistence/model"
+	"printer/pkg/cookie"
 )
 
-func getSessionToken(w http.ResponseWriter, r *http.Request) (sessionToken string, noTokenErr error) {
-	// check if user has the auth cookie
-	cookie, noTokenErr := r.Cookie(config.AuthCookieName)
-	if noTokenErr != nil {
-		return "", noTokenErr
-	}
-
-	sessionToken = cookie.Value
-	return sessionToken, noTokenErr
+type sessioner interface {
+	GetSessionByToken(sessionToken string) (*model.Session, error)
 }
 
-func (resource *authController) GetSessionIfValid(w http.ResponseWriter, r *http.Request) (session *model.Session, valid bool) {
-	// check if user has the auth cookie
-	sessionToken, noTokenErr := getSessionToken(w, r)
-	if noTokenErr != nil {
-		return &model.Session{}, false
+func GetSession(sessioner sessioner, w http.ResponseWriter, r *http.Request) (session *model.Session, doRedirect bool) {
+	authCookie, ok := cookie.GetAuthCookie(r)
+	// the user is not authenticated
+	if !ok {
+		http.Redirect(w, r, config.DefaultEndpoints.LoginPage, http.StatusSeeOther)
+		return &model.Session{}, true
 	}
 
-	// check whether there is corresponding session in server's memory
-	session, noSessionErr := resource.sessions.GetSessionByToken(sessionToken)
-	if noSessionErr != nil {
-		// remove cookie if there is no correspoding session on the server
-		removeAuthCookie(w)
-		return session, false
+	session, err := sessioner.GetSessionByToken(authCookie.Value)
+	if err != nil {
+		http.Redirect(w, r, config.DefaultEndpoints.LoginPage, http.StatusSeeOther)
+		return &model.Session{}, true
 	}
 
-	// check for expiration
-	if session.IsExpired() {
-		// remove cookie if the session is expired
-		removeAuthCookie(w)
-		// remove the session in the storage
-		resource.sessions.RemoveSession(sessionToken)
-		return session, false
-	}
-
-	return session, true
+	return session, false
 }

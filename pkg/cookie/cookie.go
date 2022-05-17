@@ -1,4 +1,4 @@
-package config
+package cookie
 
 import (
 	"net/http"

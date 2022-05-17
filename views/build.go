@@ -33,6 +33,8 @@ func buildPage(pageName string, endpoints config.Endpoints, pathToTemplates, tem
 	template := template.New(templateToExecute)
 	template, err := template.ParseFiles(withPaths...)
 	if err != nil {
+		// communicate what is wrong with templates
+		fmt.Println(err)
 		panic(fmt.Sprintf("Could not parse files for page %s", pageName))
 	}
 

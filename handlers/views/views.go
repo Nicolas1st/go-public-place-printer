@@ -2,7 +2,7 @@ package views
 
 import (
 	"net/http"
-	"printer/config"
+	"printer/handlers"
 )
 
 type views struct {
@@ -12,41 +12,17 @@ type views struct {
 	UserManager http.HandlerFunc
 }
 
-func NewViews(htmlTemplatesPath string, endpoints config.Endpoints) *views {
+func NewViews(htmlTemplatesPath string, endpoints handlers.Endpoints) *views {
 	pages := newPages(htmlTemplatesPath, endpoints)
 	return &views{
-		Login:       buildLoginView(pages.Login),
-		Signup:      buildSignupView(pages.Signup),
-		SubmitFile:  buildSubmitFileView(pages.SubmitFile),
-		UserManager: buildUserManagerView(pages.UserManager),
+		Login:       buildView(pages.Login),
+		Signup:      buildView(pages.Signup),
+		SubmitFile:  buildView(pages.SubmitFile),
+		UserManager: buildView(pages.UserManager),
 	}
 }
 
-func buildLoginView(p *page) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if err := p.execute(w, nil); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
-	}
-}
-
-func buildSignupView(p *page) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if err := p.execute(w, nil); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
-	}
-}
-
-func buildSubmitFileView(p *page) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if err := p.execute(w, nil); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
-	}
-}
-
-func buildUserManagerView(p *page) http.HandlerFunc {
+func buildView(p *page) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := p.execute(w, nil); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)

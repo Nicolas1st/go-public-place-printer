@@ -1,4 +1,4 @@
-package config
+package handlers
 
 type Endpoints struct {
 	// Public

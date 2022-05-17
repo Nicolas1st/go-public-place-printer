@@ -5,20 +5,20 @@ import (
 	"html/template"
 	"net/http"
 	"path"
-	"printer/config"
+	"printer/handlers"
 )
 
 type page struct {
 	template  *template.Template
-	Endpoints config.Endpoints
+	Endpoints handlers.Endpoints
 }
 
 type pageData struct {
-	Endpoints config.Endpoints
+	Endpoints handlers.Endpoints
 	Data      any
 }
 
-func buildPage(pageName string, endpoints config.Endpoints, pathToTemplates, templateToExecute string, templateNames ...string) *page {
+func buildPage(pageName string, endpoints handlers.Endpoints, pathToTemplates, templateToExecute string, templateNames ...string) *page {
 	if len(templateNames) == 0 {
 		panic("Can not build page with zerof files provided")
 	}

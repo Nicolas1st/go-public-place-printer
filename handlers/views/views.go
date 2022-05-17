@@ -43,11 +43,3 @@ func NewViews(htmlTemplatesPath string, database database, sessioner sessioner) 
 		UserManager: buildView(pages.UserManager),
 	}
 }
-
-func buildView(p *pages.Page) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if err := p.Execute(w, pages.NewFlashMessages(), nil); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-		}
-	}
-}

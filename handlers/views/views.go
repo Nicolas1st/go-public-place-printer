@@ -14,7 +14,7 @@ type database interface {
 }
 
 type sessioner interface {
-	GetSessionByToken(sessionToken string) (*model.Session, error)
+	GetSessionByToken(sessionToken string) (*model.Session, bool)
 	StoreSession(session *model.Session) (string, time.Time)
 	RemoveSession(sessionToken string)
 }

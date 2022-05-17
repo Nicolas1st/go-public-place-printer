@@ -1,8 +1,6 @@
 package handlers
 
-import (
-	"net/http"
-)
+import "net/http"
 
 func ForNotLoggedIn(sessioner sessioner, w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	_, ok := GetSession(sessioner, w, r)

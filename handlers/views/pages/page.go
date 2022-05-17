@@ -12,14 +12,16 @@ type Page struct {
 }
 
 type pageData struct {
-	Endpoints handlers.Endpoints
-	Data      any
+	Endpoints     handlers.Endpoints
+	FlashMessages []flashMessage
+	Data          any
 }
 
-func (p *Page) Execute(w http.ResponseWriter, data any) error {
+func (p *Page) Execute(w http.ResponseWriter, flash *FlashMessages, data any) error {
 	err := p.template.Execute(w, pageData{
-		Endpoints: handlers.DefaultEndpoints,
-		Data:      data,
+		Endpoints:     handlers.DefaultEndpoints,
+		FlashMessages: flash.messages,
+		Data:          data,
 	})
 
 	return err

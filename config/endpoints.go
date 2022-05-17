@@ -2,9 +2,10 @@ package config
 
 type Endpoints struct {
 	// Public
-	LoginPage            string
-	SignUpPage           string
-	CreateAccountHandler string
+	LoginPage         string
+	LoginFormHandler  string
+	SignUpPage        string
+	SignUpFormHandler string
 
 	// Private
 	LogoutHandler         string
@@ -20,9 +21,10 @@ type Endpoints struct {
 }
 
 var DefaultEndpoints = Endpoints{
-	LoginPage:            "/login",
-	SignUpPage:           "/signup",
-	CreateAccountHandler: "/account/creation",
+	LoginPage:         "/login",
+	LoginFormHandler:  "/login",
+	SignUpPage:        "/signup",
+	SignUpFormHandler: "/signup",
 
 	LogoutHandler:         "/logout",
 	ProfilePage:           "/profile",

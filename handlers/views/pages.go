@@ -1,7 +1,5 @@
 package views
 
-import "printer/handlers"
-
 type pages struct {
 	Login       *page
 	Signup      *page
@@ -12,7 +10,7 @@ type pages struct {
 }
 
 // newPages prebuilds all templates, for them to later be used only for
-func newPages(htmlTemplatesPath string, endpoints handlers.Endpoints) *pages {
+func newPages(htmlTemplatesPath string) *pages {
 	templateToExecute := "layout"
 
 	commonPublicTemplates := []string{"layout.html", "navbar.html", "public-links.html", "footer.html"}
@@ -20,10 +18,10 @@ func newPages(htmlTemplatesPath string, endpoints handlers.Endpoints) *pages {
 	commonAdminTemplates := []string{"layout.html", "navbar.html", "admin-links.html", "footer.html"}
 
 	return &pages{
-		Login:       buildPage("LoginPage", endpoints, htmlTemplatesPath, templateToExecute, append(commonPublicTemplates, "login.html")...),
-		Signup:      buildPage("SignUpPage", endpoints, htmlTemplatesPath, templateToExecute, append(commonPublicTemplates, "signup.html")...),
-		SubmitFile:  buildPage("SubmitFilePage", endpoints, htmlTemplatesPath, templateToExecute, append(commonPrivatecTemplates, "submit-file.html")...),
-		UserManager: buildPage("UserManagerPage", endpoints, htmlTemplatesPath, templateToExecute, append(commonAdminTemplates, "user-manager.html")...),
-		Profile:     buildPage("UserManagerPage", endpoints, htmlTemplatesPath, templateToExecute, append(commonAdminTemplates, "user-manager.html")...),
+		Login:       buildPage("LoginPage", htmlTemplatesPath, templateToExecute, append(commonPublicTemplates, "login.html")...),
+		Signup:      buildPage("SignUpPage", htmlTemplatesPath, templateToExecute, append(commonPublicTemplates, "signup.html")...),
+		SubmitFile:  buildPage("SubmitFilePage", htmlTemplatesPath, templateToExecute, append(commonPrivatecTemplates, "submit-file.html")...),
+		UserManager: buildPage("UserManagerPage", htmlTemplatesPath, templateToExecute, append(commonAdminTemplates, "user-manager.html")...),
+		Profile:     buildPage("UserManagerPage", htmlTemplatesPath, templateToExecute, append(commonAdminTemplates, "user-manager.html")...),
 	}
 }

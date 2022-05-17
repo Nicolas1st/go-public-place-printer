@@ -2,21 +2,20 @@ package views
 
 import (
 	"net/http"
-	"printer/handlers"
 )
 
 type views struct {
 	Login       http.HandlerFunc
-	Signup      http.HandlerFunc
+	SignUp      http.HandlerFunc
 	SubmitFile  http.HandlerFunc
 	UserManager http.HandlerFunc
 }
 
-func NewViews(htmlTemplatesPath string, endpoints handlers.Endpoints) *views {
-	pages := newPages(htmlTemplatesPath, endpoints)
+func NewViews(htmlTemplatesPath string) *views {
+	pages := newPages(htmlTemplatesPath)
 	return &views{
 		Login:       buildView(pages.Login),
-		Signup:      buildView(pages.Signup),
+		SignUp:      buildView(pages.Signup),
 		SubmitFile:  buildView(pages.SubmitFile),
 		UserManager: buildView(pages.UserManager),
 	}

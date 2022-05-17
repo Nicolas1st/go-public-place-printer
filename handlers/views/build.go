@@ -18,7 +18,7 @@ type pageData struct {
 	Data      any
 }
 
-func buildPage(pageName string, endpoints handlers.Endpoints, pathToTemplates, templateToExecute string, templateNames ...string) *page {
+func buildPage(pageName string, pathToTemplates, templateToExecute string, templateNames ...string) *page {
 	if len(templateNames) == 0 {
 		panic("Can not build page with zerof files provided")
 	}
@@ -40,13 +40,13 @@ func buildPage(pageName string, endpoints handlers.Endpoints, pathToTemplates, t
 
 	return &page{
 		template:  template,
-		Endpoints: endpoints,
+		Endpoints: handlers.DefaultEndpoints,
 	}
 }
 
 func (p *page) execute(w http.ResponseWriter, data any) error {
 	err := p.template.Execute(w, pageData{
-		Endpoints: p.Endpoints,
+		Endpoints: handlers.DefaultEndpoints,
 		Data:      data,
 	})
 

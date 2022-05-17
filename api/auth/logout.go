@@ -12,7 +12,7 @@ func (c *authController) Logout(w http.ResponseWriter, r *http.Request) {
 		c.sessions.RemoveSession(cookie.Value)
 
 		// remove session cookie in the browser
-		removeAuthCookie(w)
+		config.RemoveAuthCookie(w)
 	}
 
 	http.Redirect(w, r, "/login", http.StatusSeeOther)

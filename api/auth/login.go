@@ -3,6 +3,7 @@ package auth
 import (
 	"encoding/json"
 	"net/http"
+	"printer/config"
 	"printer/persistence/model"
 )
 
@@ -45,7 +46,7 @@ func (c *authController) Login(w http.ResponseWriter, r *http.Request) {
 	token, expiryTime := c.sessions.StoreSession(session)
 
 	// set session cookie in the user's browser
-	setAuthCookie(w, token, expiryTime)
+	config.SetAuthCookie(w, token, expiryTime)
 
 	// set redirection url
 	jsonResponse.RedirectionURL = "/submit-file"

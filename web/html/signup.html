@@ -3,6 +3,9 @@
         <div class="form-container">
             <h1 class="form-title"> Sign Up </h1>
             <form action="{{ .Endpoints.SignUpPage }}" method="post" class="form">
+                {{ range .FlashMessages }}
+                    <p> {{ . }} </p>
+                {{ end }}
                 <div class="form-fields">
                     <div class="form-field">
                         <label for="username"> Username </label>

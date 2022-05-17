@@ -3,7 +3,25 @@ package views
 import (
 	"net/http"
 	"printer/handlers/views/pages"
+	"printer/persistence/model"
+	"time"
 )
+
+type database interface {
+	GetUserByName(username string) (*model.User, error)
+	GetUserByEmail(username string) (*model.User, error)
+	CreateNewUser(username, email, password string) error
+}
+
+type sessioner interface {
+	StoreSession(session *model.Session) (string, time.Time)
+	RemoveSession(sessionToken string)
+}
+
+type viewsController struct {
+	db        database
+	sessioner sessioner
+}
 
 type views struct {
 	Login       http.HandlerFunc
@@ -12,11 +30,15 @@ type views struct {
 	UserManager http.HandlerFunc
 }
 
-func NewViews(htmlTemplatesPath string) *views {
+func NewViews(htmlTemplatesPath string, database database, sessioner sessioner) *views {
+	c := &viewsController{
+		db:        database,
+		sessioner: sessioner,
+	}
 	pages := pages.NewPages(htmlTemplatesPath)
 	return &views{
-		Login:       buildView(pages.Login),
-		SignUp:      buildView(pages.Signup),
+		Login:       c.buildLoginView(pages.Login),
+		SignUp:      c.buildSignUpView(pages.Signup),
 		SubmitFile:  buildView(pages.SubmitFile),
 		UserManager: buildView(pages.UserManager),
 	}
@@ -24,7 +46,7 @@ func NewViews(htmlTemplatesPath string) *views {
 
 func buildView(p *pages.Page) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if err := p.Execute(w, nil); err != nil {
+		if err := p.Execute(w, pages.NewFlashMessages(), nil); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 	}

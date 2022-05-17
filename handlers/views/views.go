@@ -2,6 +2,7 @@ package views
 
 import (
 	"net/http"
+	"printer/handlers/views/pages"
 )
 
 type views struct {
@@ -12,7 +13,7 @@ type views struct {
 }
 
 func NewViews(htmlTemplatesPath string) *views {
-	pages := newPages(htmlTemplatesPath)
+	pages := pages.NewPages(htmlTemplatesPath)
 	return &views{
 		Login:       buildView(pages.Login),
 		SignUp:      buildView(pages.Signup),
@@ -21,9 +22,9 @@ func NewViews(htmlTemplatesPath string) *views {
 	}
 }
 
-func buildView(p *page) http.HandlerFunc {
+func buildView(p *pages.Page) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if err := p.execute(w, nil); err != nil {
+		if err := p.Execute(w, nil); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 		}
 	}

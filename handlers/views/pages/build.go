@@ -1,24 +1,13 @@
-package views
+package pages
 
 import (
 	"fmt"
 	"html/template"
-	"net/http"
 	"path"
 	"printer/handlers"
 )
 
-type page struct {
-	template  *template.Template
-	Endpoints handlers.Endpoints
-}
-
-type pageData struct {
-	Endpoints handlers.Endpoints
-	Data      any
-}
-
-func buildPage(pageName string, pathToTemplates, templateToExecute string, templateNames ...string) *page {
+func buildPage(pageName string, pathToTemplates, templateToExecute string, templateNames ...string) *Page {
 	if len(templateNames) == 0 {
 		panic("Can not build page with zerof files provided")
 	}
@@ -38,17 +27,8 @@ func buildPage(pageName string, pathToTemplates, templateToExecute string, templ
 		panic(fmt.Sprintf("Could not parse files for page %s", pageName))
 	}
 
-	return &page{
+	return &Page{
 		template:  template,
 		Endpoints: handlers.DefaultEndpoints,
 	}
-}
-
-func (p *page) execute(w http.ResponseWriter, data any) error {
-	err := p.template.Execute(w, pageData{
-		Endpoints: handlers.DefaultEndpoints,
-		Data:      data,
-	})
-
-	return err
 }

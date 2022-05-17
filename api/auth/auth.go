@@ -1,30 +1,28 @@
 package auth
 
 import (
-	"net/http"
 	"printer/persistence/model"
+	"time"
 )
 
-type authDependencies struct {
-	sessionStorage SessionStorageInterface
-	database       DatabaseInterface
+type sessionStorage interface {
+	StoreSession(session *model.Session) (string, time.Time)
+	RemoveSession(sessionToken string)
+	GetSessionByToken(sessionToken string) (*model.Session, error)
 }
 
-type AuthHandlers struct {
-	Login             func(w http.ResponseWriter, r *http.Request) error
-	Logout            func(w http.ResponseWriter, r *http.Request) error
-	GetSessionIfValid func(w http.ResponseWriter, r *http.Request) (*model.Session, bool)
+type database interface {
+	GetUserByName(username string) (*model.User, error)
 }
 
-func NewAuthHandlers(sessionStorage SessionStorageInterface, database DatabaseInterface) *AuthHandlers {
-	authDependencies := &authDependencies{
-		sessionStorage: sessionStorage,
-		database:       database,
-	}
+type authController struct {
+	sessions sessionStorage
+	db       database
+}
 
-	return &AuthHandlers{
-		Login:             authDependencies.Authenticate,
-		Logout:            authDependencies.Logout,
-		GetSessionIfValid: authDependencies.GetSessionIfValid,
+func NewController(sessions sessionStorage, db database) *authController {
+	return &authController{
+		sessions: sessions,
+		db:       db,
 	}
 }

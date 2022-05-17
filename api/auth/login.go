@@ -1,36 +1,54 @@
 package auth
 
 import (
-	"errors"
+	"encoding/json"
 	"net/http"
 	"printer/persistence/model"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
-func (resource *authDependencies) Authenticate(w http.ResponseWriter, r *http.Request) error {
-	username := r.PostFormValue("username")
-	password := r.PostFormValue("password")
+type loginRequestSchema struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
 
-	// check if user exists
-	user, err := resource.database.GetUserByName(username)
-	if err != nil {
-		return errors.New("not user found with the name specified")
+type loginResponseSchema struct {
+	RedirectionURL string   `json:"redirectionURL"`
+	ErrorMessages  []string `json:"flashMessage"`
+}
+
+func (c *authController) Login(w http.ResponseWriter, r *http.Request) {
+	var jsonRequest loginRequestSchema
+	if err := json.NewDecoder(r.Body).Decode(&jsonRequest); err != nil {
+		http.Error(w, "Could not parse the request", http.StatusBadRequest)
+		return
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
+	var jsonResponse loginResponseSchema
+
+	// check if user exists
+	user, err := c.db.GetUserByName(jsonRequest.Username)
 	if err != nil {
-		return errors.New("username or password is wrong")
+		jsonResponse.ErrorMessages = append(jsonResponse.ErrorMessages, "Incorrect name or password", jsonRequest.Username)
+		json.NewEncoder(w).Encode(jsonResponse)
+		return
+	}
+
+	// check if password is valid
+	if !user.IsPasswordValid(jsonRequest.Password) {
+		jsonResponse.ErrorMessages = append(jsonResponse.ErrorMessages, "Incorrect name or password", jsonRequest.Username)
+		json.NewEncoder(w).Encode(jsonResponse)
+		return
 	}
 
 	// create session
 	session := model.NewSession(user, user.Name)
-
-	// store session in memory
-	token, expiryTime := resource.sessionStorage.StoreSession(session)
+	token, expiryTime := c.sessions.StoreSession(session)
 
 	// set session cookie in the user's browser
-	SetAuthCookie(w, r, token, expiryTime)
+	setAuthCookie(w, token, expiryTime)
 
-	return nil
+	// set redirection url
+	jsonResponse.RedirectionURL = "/submit-file"
+
+	json.NewEncoder(w).Encode(jsonResponse)
 }

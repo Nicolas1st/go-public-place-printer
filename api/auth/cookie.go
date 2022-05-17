@@ -2,27 +2,25 @@ package auth
 
 import (
 	"net/http"
+	"printer/config"
 	"time"
 )
 
-const AuthCookieName string = "auth_session_cookie"
-const CookiePath string = "/"
-
-func SetAuthCookie(w http.ResponseWriter, r *http.Request, token string, expiryTime time.Time) {
+func setAuthCookie(w http.ResponseWriter, token string, expiryTime time.Time) {
 	http.SetCookie(w, &http.Cookie{
-		Name:     AuthCookieName,
+		Name:     config.AuthCookieName,
 		Value:    token,
-		Path:     CookiePath,
+		Path:     config.AuthCookiePath,
 		Expires:  expiryTime,
 		HttpOnly: true,
 	})
 }
 
-func RemoveAuthCookie(w http.ResponseWriter, r *http.Request) {
+func removeAuthCookie(w http.ResponseWriter) {
 	http.SetCookie(w, &http.Cookie{
-		Name:     AuthCookieName,
+		Name:     config.AuthCookieName,
 		Value:    "",
-		Path:     CookiePath,
+		Path:     config.AuthCookiePath,
 		Expires:  time.Now(),
 		HttpOnly: true,
 	})

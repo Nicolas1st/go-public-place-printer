@@ -1,20 +1,41 @@
 package jobs
 
-import "net/http"
+import (
+	"io"
+	"net/http"
+	"printer/handlers"
+	"printer/persistence/model"
 
-type JobsHandlers struct {
-	SubmitJob func(w http.ResponseWriter, r *http.Request) error
-	CancelJob func(w http.ResponseWriter, r *http.Request) error
+	"github.com/gorilla/mux"
+)
+
+type filerInterface interface {
+	StoreFile(uploadedFile io.Reader, username, submittedFilename string) (filepath string, err error)
+	RemoveFile(filePath string) error
 }
 
-func NewJobsHandlers(jobq jobqInterface, filer filerInterface) *JobsHandlers {
-	jobsDependenices := &jobsDependencies{
-		jobq:  jobq,
-		filer: filer,
+type jobqInterface interface {
+	Enqueue(job *model.Job) model.JobID
+	CancelJob(jobID model.JobID)
+	GetAllJobs() []*model.Job
+}
+
+type jobsController struct {
+	jobq      jobqInterface
+	filer     filerInterface
+	sessioner handlers.Sessioner
+}
+
+func NewApi(jobq jobqInterface, filer filerInterface, sessioner handlers.Sessioner) *mux.Router {
+	c := &jobsController{
+		jobq:      jobq,
+		filer:     filer,
+		sessioner: sessioner,
 	}
 
-	return &JobsHandlers{
-		SubmitJob: jobsDependenices.SubmitJob,
-		CancelJob: jobsDependenices.CancelJob,
-	}
+	r := mux.NewRouter()
+
+	r.HandleFunc("/{id:[0-9]+}", c.CancelJob).Methods(http.MethodDelete)
+
+	return r
 }

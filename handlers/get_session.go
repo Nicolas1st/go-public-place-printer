@@ -6,7 +6,7 @@ import (
 )
 
 type Sessioner interface {
-	GetSessionByToken(sessionToken string) (*model.Session, error)
+	GetSessionByToken(sessionToken string) (*model.Session, bool)
 }
 
 func GetSession(sessioner Sessioner, r *http.Request) (session *model.Session, doRedirect bool) {
@@ -17,8 +17,8 @@ func GetSession(sessioner Sessioner, r *http.Request) (session *model.Session, d
 	}
 
 	// the token has expired
-	session, err := sessioner.GetSessionByToken(authCookie.Value)
-	if err != nil {
+	session, ok = sessioner.GetSessionByToken(authCookie.Value)
+	if ok {
 		return &model.Session{}, true
 	}
 

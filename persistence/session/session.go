@@ -1,7 +1,6 @@
 package session
 
 import (
-	"errors"
 	"printer/persistence/model"
 	"time"
 
@@ -70,11 +69,16 @@ func (storage *SessionStorage) RemoveSession(sessionToken string) {
 
 // GetSessionByToken checks whether the session is valid,
 // it checks if it exists and is not too old
-func (storage *SessionStorage) GetSessionByToken(sessionToken string) (*model.Session, error) {
+func (storage *SessionStorage) GetSessionByToken(sessionToken string) (*model.Session, bool) {
 	session, exists := storage.sessions[sessionToken]
 	if !exists {
-		return &model.Session{}, errors.New("session does not exist")
+		return &model.Session{}, false
 	}
 
-	return session, nil
+	if session.IsExpired() {
+		storage.RemoveSession(sessionToken)
+		return &model.Session{}, false
+	}
+
+	return session, true
 }

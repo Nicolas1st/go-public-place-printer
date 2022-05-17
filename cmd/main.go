@@ -28,6 +28,7 @@ func main() {
 	http.Handle(handlers.DefaultEndpoints.SignUpPage, handlers.ForNotLoggedIn(sessioner, views.SignUp))
 	http.Handle(handlers.DefaultEndpoints.PrinterPage, handlers.ForCommonUsers(sessioner, views.Printer))
 	http.Handle(handlers.DefaultEndpoints.UserManagerPage, handlers.ForAdmin(sessioner, views.UserManager))
+	http.Handle(handlers.DefaultEndpoints.LogoutHandler, handlers.ForCommonUsers(sessioner, views.Logout))
 
 	server.ListenAndServe()
 }

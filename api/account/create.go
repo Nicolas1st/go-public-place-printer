@@ -6,7 +6,7 @@ import (
 )
 
 // Request json schema contents the handler expects to receive
-type CreateAccountRequestSchema struct {
+type createAccountRequestSchema struct {
 	Username       string `json:"username"`
 	Email          string `json:"email"`
 	Password       string `json:"password"`
@@ -14,12 +14,12 @@ type CreateAccountRequestSchema struct {
 }
 
 // Response json schema contents sent back by the handler
-type CreateAccountResponseSchema struct {
+type createAccountResponseSchema struct {
 	RedirectionURL string   `json:"redirectionURL"`
 	ErrorMessages  []string `json:"flashMessage"`
 }
 
-func (c *accountController) ValidateNewAccountData(schema CreateAccountRequestSchema) (errorMessages []string, valid bool) {
+func (c *accountController) validateNewAccountData(schema createAccountRequestSchema) (errorMessages []string, valid bool) {
 	valid = true
 
 	// check username uniqness
@@ -48,7 +48,7 @@ func (c *accountController) ValidateNewAccountData(schema CreateAccountRequestSc
 // otherwise provides a list of error messages to be displayed
 // on the sign up page
 func (c *accountController) CreateAccount(w http.ResponseWriter, r *http.Request) {
-	var requestFields CreateAccountRequestSchema
+	var requestFields createAccountRequestSchema
 
 	// decode request, if not possible send bad request response status
 	err := json.NewDecoder(r.Body).Decode(&requestFields)
@@ -57,10 +57,10 @@ func (c *accountController) CreateAccount(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	var response CreateAccountResponseSchema
+	var response createAccountResponseSchema
 
 	// check request data validity, if not valid, send back the errors
-	errorMessages, valid := c.ValidateNewAccountData(requestFields)
+	errorMessages, valid := c.validateNewAccountData(requestFields)
 	response.ErrorMessages = errorMessages
 
 	if !valid {

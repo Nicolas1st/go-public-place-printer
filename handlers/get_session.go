@@ -14,13 +14,12 @@ func GetSession(sessioner sessioner, w http.ResponseWriter, r *http.Request) (se
 	authCookie, ok := cookie.GetAuthCookie(r)
 	// the user is not authenticated
 	if !ok {
-		http.Redirect(w, r, DefaultEndpoints.LoginPage, http.StatusSeeOther)
 		return &model.Session{}, true
 	}
 
+	// the token has expired
 	session, err := sessioner.GetSessionByToken(authCookie.Value)
 	if err != nil {
-		http.Redirect(w, r, DefaultEndpoints.LoginPage, http.StatusSeeOther)
 		return &model.Session{}, true
 	}
 

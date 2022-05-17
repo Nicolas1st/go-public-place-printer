@@ -26,3 +26,7 @@ func (u *User) IsPasswordValid(password string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(u.PasswordHash), []byte(password))
 	return err == nil
 }
+
+func (u *User) IsAdmin() bool {
+	return u.Role == Admin
+}

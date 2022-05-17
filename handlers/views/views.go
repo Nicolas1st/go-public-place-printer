@@ -26,6 +26,7 @@ type viewsController struct {
 
 type views struct {
 	Login       http.HandlerFunc
+	Logout      http.HandlerFunc
 	SignUp      http.HandlerFunc
 	Printer     http.HandlerFunc
 	UserManager http.HandlerFunc
@@ -39,6 +40,7 @@ func NewViews(htmlTemplatesPath string, database database, sessioner sessioner) 
 	pages := pages.NewPages(htmlTemplatesPath)
 	return &views{
 		Login:       c.buildLoginView(pages),
+		Logout:      c.Logout,
 		SignUp:      c.buildSignUpView(pages),
 		Printer:     c.buildPrinterView(pages),
 		UserManager: c.buildUserManagerView(pages),

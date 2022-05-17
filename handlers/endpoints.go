@@ -1,6 +1,8 @@
 package handlers
 
 type Endpoints struct {
+	Root string
+
 	// Public
 	LoginPage         string
 	LoginFormHandler  string
@@ -21,6 +23,7 @@ type Endpoints struct {
 }
 
 var DefaultEndpoints = Endpoints{
+	Root:              "/",
 	LoginPage:         "/login",
 	LoginFormHandler:  "/login",
 	SignUpPage:        "/signup",

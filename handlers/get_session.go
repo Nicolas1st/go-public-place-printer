@@ -9,18 +9,18 @@ type Sessioner interface {
 	GetSessionByToken(sessionToken string) (*model.Session, bool)
 }
 
-func GetSession(sessioner Sessioner, r *http.Request) (session *model.Session, doRedirect bool) {
+func GetSession(sessioner Sessioner, r *http.Request) (*model.Session, bool) {
 	authCookie, ok := GetAuthCookie(r)
 	// the user is not authenticated
 	if !ok {
-		return &model.Session{}, true
+		return &model.Session{}, false
 	}
 
 	// the token has expired
-	session, ok = sessioner.GetSessionByToken(authCookie.Value)
-	if ok {
-		return &model.Session{}, true
+	session, ok := sessioner.GetSessionByToken(authCookie.Value)
+	if !ok {
+		return &model.Session{}, false
 	}
 
-	return session, false
+	return session, true
 }

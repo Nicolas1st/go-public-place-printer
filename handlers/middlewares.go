@@ -17,10 +17,10 @@ func ForNotLoggedIn(sessioner Sessioner, next http.HandlerFunc) http.HandlerFunc
 func ForCommonUsers(sessioner Sessioner, next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		_, ok := GetSession(sessioner, r)
-		if !ok {
-			http.Redirect(w, r, DefaultEndpoints.LoginPage, http.StatusSeeOther)
-		} else {
+		if ok {
 			next(w, r)
+		} else {
+			http.Redirect(w, r, DefaultEndpoints.LoginPage, http.StatusSeeOther)
 		}
 	}
 }

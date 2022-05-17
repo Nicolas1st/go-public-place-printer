@@ -6,7 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"printer/api/middlewares"
+	"printer/middlewares"
 	"printer/persistence/model"
 )
 

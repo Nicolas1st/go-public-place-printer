@@ -2,7 +2,7 @@
     <main class="main">
         <div class="form-container">
             <h1 class="form-title"> Login </h1>
-            <form action="/auth/login" method="post" enctype="multipart/form-data" class="form">
+            <form action="{{ .Endpoints.LoginPage }}" method="post" class="form">
                 <div class="form-fields">
                     <div class="form-field">
                         <label for="username"> Username </label>

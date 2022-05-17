@@ -2,7 +2,7 @@
     <main class="main">
         <div class="form-container">
             <h1 class="form-title"> Sign Up </h1>
-            <form action="/register" method="post" enctype="multipart/form-data" class="form">
+            <form action="{{ .Endpoints.SignUpPage }}" method="post" class="form">
                 <div class="form-fields">
                     <div class="form-field">
                         <label for="username"> Username </label>

@@ -1,5 +1,5 @@
 {{ define "links" }}
-    <a href="/user-manager" class="navbar-link"> User Manager </a>
-    <a href="/submit-file" class="navbar-link"> Print File </a>
-    <a href="/auth/logout" class="navbar-link"> Logout </a>
+    <a href="{{ .Endpoints.UserManagerPage }}" class="navbar-link"> User Manager </a>
+    <a href="{{ .Endpoints.PrinterPage }}" class="navbar-link"> Print File </a>
+    <a href="{{ .Endpoints.LogoutHandler }}" class="navbar-link"> Logout </a>
 {{ end }}

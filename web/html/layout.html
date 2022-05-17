@@ -9,9 +9,9 @@
         <link rel="stylesheet" href="/static/css/style.css">
     </head>
     <body>
-        {{ template "navbar" }}
+        {{ template "navbar" . }}
         {{ template "main" . }}
-        {{ template "footer" }}
+        {{ template "footer" . }}
     </body>
     </html>
 {{ end }}

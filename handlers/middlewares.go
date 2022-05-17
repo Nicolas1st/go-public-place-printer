@@ -2,7 +2,7 @@ package handlers
 
 import "net/http"
 
-func ForNotLoggedIn(sessioner sessioner, w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+func ForNotLoggedIn(sessioner Sessioner, w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	_, ok := GetSession(sessioner, w, r)
 	if ok {
 		http.Redirect(w, r, DefaultEndpoints.PrinterPage, http.StatusSeeOther)
@@ -11,7 +11,7 @@ func ForNotLoggedIn(sessioner sessioner, w http.ResponseWriter, r *http.Request,
 	}
 }
 
-func ForCommonUsers(sessioner sessioner, w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+func ForCommonUsers(sessioner Sessioner, w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	_, ok := GetSession(sessioner, w, r)
 	if !ok {
 		http.Redirect(w, r, DefaultEndpoints.LoginPage, http.StatusSeeOther)
@@ -20,7 +20,7 @@ func ForCommonUsers(sessioner sessioner, w http.ResponseWriter, r *http.Request,
 	}
 }
 
-func ForAdmin(sessioner sessioner, w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+func ForAdmin(sessioner Sessioner, w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	session, ok := GetSession(sessioner, w, r)
 	if !ok {
 		http.Redirect(w, r, DefaultEndpoints.LoginPage, http.StatusSeeOther)

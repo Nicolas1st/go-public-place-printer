@@ -1,19 +1,19 @@
 package auth
 
-import "net/http"
+import (
+	"net/http"
+	"printer/config"
+)
 
-func (resource *authDependencies) Logout(w http.ResponseWriter, r *http.Request) error {
-	cookie, err := r.Cookie(AuthCookieName)
-	if err == http.ErrNoCookie {
-		w.WriteHeader(http.StatusOK)
-		return nil
+func (c *authController) Logout(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie(config.AuthCookieName)
+	if err != http.ErrNoCookie {
+		// remove session on the server
+		c.sessions.RemoveSession(cookie.Value)
+
+		// remove session cookie in the browser
+		removeAuthCookie(w)
 	}
 
-	// removing the session by token
-	resource.sessionStorage.RemoveSession(cookie.Value)
-
-	// removing the session in the browser
-	RemoveAuthCookie(w, r)
-
-	return nil
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }

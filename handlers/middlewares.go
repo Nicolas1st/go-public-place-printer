@@ -3,7 +3,7 @@ package handlers
 import "net/http"
 
 func ForNotLoggedIn(sessioner Sessioner, w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	_, ok := GetSession(sessioner, w, r)
+	_, ok := GetSession(sessioner, r)
 	if ok {
 		http.Redirect(w, r, DefaultEndpoints.PrinterPage, http.StatusSeeOther)
 	} else {
@@ -12,7 +12,7 @@ func ForNotLoggedIn(sessioner Sessioner, w http.ResponseWriter, r *http.Request,
 }
 
 func ForCommonUsers(sessioner Sessioner, w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	_, ok := GetSession(sessioner, w, r)
+	_, ok := GetSession(sessioner, r)
 	if !ok {
 		http.Redirect(w, r, DefaultEndpoints.LoginPage, http.StatusSeeOther)
 	} else {
@@ -21,7 +21,7 @@ func ForCommonUsers(sessioner Sessioner, w http.ResponseWriter, r *http.Request,
 }
 
 func ForAdmin(sessioner Sessioner, w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-	session, ok := GetSession(sessioner, w, r)
+	session, ok := GetSession(sessioner, r)
 	if !ok {
 		http.Redirect(w, r, DefaultEndpoints.LoginPage, http.StatusSeeOther)
 		return

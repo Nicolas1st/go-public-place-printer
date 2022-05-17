@@ -10,7 +10,7 @@ type Sessioner interface {
 	GetSessionByToken(sessionToken string) (*model.Session, error)
 }
 
-func GetSession(sessioner Sessioner, w http.ResponseWriter, r *http.Request) (session *model.Session, doRedirect bool) {
+func GetSession(sessioner Sessioner, r *http.Request) (session *model.Session, doRedirect bool) {
 	authCookie, ok := cookie.GetAuthCookie(r)
 	// the user is not authenticated
 	if !ok {

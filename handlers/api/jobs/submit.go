@@ -1,6 +1,7 @@
 package jobs
 
 import (
+	"encoding/json"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -9,8 +10,7 @@ import (
 )
 
 type SubmitJobResponseSchema struct {
-	RedirectionURL string   `json:"redirectionURL"`
-	ErrorMessages  []string `json:"flashMessage"`
+	ErrorMessages []string `json:"flashMessage"`
 }
 
 func (c *jobsController) SubmitJob(w http.ResponseWriter, r *http.Request) {
@@ -54,4 +54,6 @@ func (c *jobsController) SubmitJob(w http.ResponseWriter, r *http.Request) {
 	// build job
 	job := model.NewJob(filepath, fileHeader.Filename, session.Username)
 	c.jobq.Enqueue(job)
+
+	json.NewEncoder(w).Encode(&jsonResponse)
 }

@@ -3,7 +3,6 @@ package handlers
 import (
 	"net/http"
 	"printer/persistence/model"
-	"printer/pkg/cookie"
 )
 
 type Sessioner interface {
@@ -11,7 +10,7 @@ type Sessioner interface {
 }
 
 func GetSession(sessioner Sessioner, r *http.Request) (session *model.Session, doRedirect bool) {
-	authCookie, ok := cookie.GetAuthCookie(r)
+	authCookie, ok := GetAuthCookie(r)
 	// the user is not authenticated
 	if !ok {
 		return &model.Session{}, true

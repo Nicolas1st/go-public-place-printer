@@ -7,11 +7,11 @@ import (
 	"printer/persistence/model"
 )
 
-func (c *viewsController) buildLoginView(p *pages.Page) http.HandlerFunc {
+func (c *viewsController) buildLoginView(p *pages.Pages) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			if messages, success := c.handleLoginForm(w, r); !success {
-				p.Execute(w, messages, nil)
+				p.Public.Login.Execute(w, messages, nil)
 			} else {
 				http.Redirect(w, r, handlers.DefaultEndpoints.PrinterPage, http.StatusSeeOther)
 			}
@@ -19,7 +19,7 @@ func (c *viewsController) buildLoginView(p *pages.Page) http.HandlerFunc {
 			return
 		}
 
-		p.Execute(w, pages.NewFlashMessages(), nil)
+		p.Public.Login.Execute(w, pages.NewFlashMessages(), nil)
 	}
 }
 

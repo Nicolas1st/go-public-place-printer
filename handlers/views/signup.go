@@ -6,11 +6,11 @@ import (
 	"printer/handlers/views/pages"
 )
 
-func (c *viewsController) buildSignUpView(p *pages.Page) http.HandlerFunc {
+func (c *viewsController) buildSignUpView(p *pages.Pages) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			if messages, success := c.handleSignUpForm(w, r); !success {
-				p.Execute(w, messages, nil)
+				p.Public.SignUp.Execute(w, messages, nil)
 			} else {
 				http.Redirect(w, r, handlers.DefaultEndpoints.LoginPage, http.StatusSeeOther)
 			}
@@ -18,7 +18,7 @@ func (c *viewsController) buildSignUpView(p *pages.Page) http.HandlerFunc {
 			return
 		}
 
-		p.Execute(w, pages.NewFlashMessages(), nil)
+		p.Public.SignUp.Execute(w, pages.NewFlashMessages(), nil)
 	}
 }
 

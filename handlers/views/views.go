@@ -14,6 +14,7 @@ type database interface {
 }
 
 type sessioner interface {
+	GetSessionByToken(sessionToken string) (*model.Session, error)
 	StoreSession(session *model.Session) (string, time.Time)
 	RemoveSession(sessionToken string)
 }
@@ -26,7 +27,7 @@ type viewsController struct {
 type views struct {
 	Login       http.HandlerFunc
 	SignUp      http.HandlerFunc
-	SubmitFile  http.HandlerFunc
+	Printer     http.HandlerFunc
 	UserManager http.HandlerFunc
 }
 
@@ -37,9 +38,9 @@ func NewViews(htmlTemplatesPath string, database database, sessioner sessioner) 
 	}
 	pages := pages.NewPages(htmlTemplatesPath)
 	return &views{
-		Login:       c.buildLoginView(pages.Login),
-		SignUp:      c.buildSignUpView(pages.Signup),
-		SubmitFile:  buildView(pages.SubmitFile),
-		UserManager: buildView(pages.UserManager),
+		Login:       c.buildLoginView(pages),
+		SignUp:      c.buildSignUpView(pages),
+		Printer:     c.buildPrinterView(pages),
+		UserManager: c.buildUserManagerView(pages),
 	}
 }

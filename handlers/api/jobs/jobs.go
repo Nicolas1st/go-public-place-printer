@@ -35,9 +35,9 @@ func NewApi(jobq jobqInterface, filer filerInterface, sessioner handlers.Session
 
 	r := mux.NewRouter()
 
-	r.HandleFunc("/all", handlers.ForAdmin(c.sessioner, c.GetAllJobs)).Methods(http.MethodGet)
-	r.HandleFunc("/", c.SubmitJob).Methods(http.MethodPost)
-	r.HandleFunc("/{id:[0-9]+}", c.CancelJob).Methods(http.MethodDelete)
+	r.HandleFunc(handlers.DefaultEndpoints.JobsApi, handlers.ForAdmin(c.sessioner, c.GetAllJobs)).Methods(http.MethodGet)
+	r.HandleFunc(handlers.DefaultEndpoints.JobsApi, c.SubmitJob).Methods(http.MethodPost)
+	r.HandleFunc(handlers.DefaultEndpoints.JobsApi+"/{id:[0-9]+}", c.CancelJob).Methods(http.MethodDelete)
 
 	return r
 }

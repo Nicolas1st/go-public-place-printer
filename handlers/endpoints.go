@@ -18,6 +18,7 @@ type Endpoints struct {
 	UpdateEmailHandler    string
 	UpdatePasswordHandler string
 	JobsApi               string
+	UsersApi              string
 
 	// Admin
 	UserManagerPage string
@@ -40,6 +41,8 @@ var DefaultEndpoints = Endpoints{
 	JobsApi:          "/printer/jobs",
 	SubmitJobHandler: "/printer/jobs",
 	CancelJobHandler: "/printer/jobs",
+
+	UsersApi: "/users",
 
 	UserManagerPage: "/admin/users",
 }

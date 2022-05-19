@@ -1,10 +1,14 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"printer/handlers"
+	"printer/handlers/api/jobs"
 	"printer/handlers/views"
 	"printer/persistence/db"
+	"printer/persistence/filer"
+	"printer/persistence/jobq"
 	"printer/persistence/session"
 )
 
@@ -16,6 +20,8 @@ func main() {
 	// set up database
 	db := db.NewDatabase(dsn)
 	sessioner := session.NewSessionStorage()
+	jobq := jobq.NewJobQueue()
+	filer := filer.NewFiler("./files", 2<<30)
 
 	// serve static files
 	files := http.FileServer(http.Dir("./web"))
@@ -23,12 +29,19 @@ func main() {
 
 	// register views
 	views := views.NewViews("./web/html", db, sessioner)
-	http.Handle(handlers.DefaultEndpoints.Root, handlers.ForNotLoggedIn(sessioner, views.Login))
-	http.Handle(handlers.DefaultEndpoints.LoginPage, handlers.ForNotLoggedIn(sessioner, views.Login))
-	http.Handle(handlers.DefaultEndpoints.SignUpPage, handlers.ForNotLoggedIn(sessioner, views.SignUp))
-	http.Handle(handlers.DefaultEndpoints.PrinterPage, handlers.ForCommonUsers(sessioner, views.Printer))
-	http.Handle(handlers.DefaultEndpoints.UserManagerPage, handlers.ForAdmin(sessioner, views.UserManager))
-	http.Handle(handlers.DefaultEndpoints.LogoutHandler, handlers.ForCommonUsers(sessioner, views.Logout))
+	http.HandleFunc(handlers.DefaultEndpoints.Root, handlers.ForNotLoggedIn(sessioner, views.Login))
+	http.HandleFunc(handlers.DefaultEndpoints.LoginPage, handlers.ForNotLoggedIn(sessioner, views.Login))
+	http.HandleFunc(handlers.DefaultEndpoints.SignUpPage, handlers.ForNotLoggedIn(sessioner, views.SignUp))
+	http.HandleFunc(handlers.DefaultEndpoints.PrinterPage, handlers.ForCommonUsers(sessioner, views.Printer))
+	http.HandleFunc(handlers.DefaultEndpoints.UserManagerPage, handlers.ForAdmin(sessioner, views.UserManager))
+	http.HandleFunc(handlers.DefaultEndpoints.LogoutHandler, handlers.ForCommonUsers(sessioner, views.Logout))
 
-	server.ListenAndServe()
+	// register apis
+	jobs := jobs.NewApi(jobq, filer, sessioner)
+	http.HandleFunc(
+		handlers.DefaultEndpoints.JobsApi,
+		handlers.ForCommonUsers(sessioner, func(w http.ResponseWriter, r *http.Request) { jobs.ServeHTTP(w, r) }),
+	)
+
+	fmt.Println(server.ListenAndServe())
 }

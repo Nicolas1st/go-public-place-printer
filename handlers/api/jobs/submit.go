@@ -10,7 +10,7 @@ import (
 )
 
 type SubmitJobResponseSchema struct {
-	ErrorMessages []string `json:"flashMessage"`
+	FlashMessages []string `json:"flashMessages"`
 }
 
 func (c *jobsController) SubmitJob(w http.ResponseWriter, r *http.Request) {
@@ -25,20 +25,23 @@ func (c *jobsController) SubmitJob(w http.ResponseWriter, r *http.Request) {
 	// extract the file form the form
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
-		jsonResponse.ErrorMessages = append(jsonResponse.ErrorMessages, "No file provided")
+		jsonResponse.FlashMessages = append(jsonResponse.FlashMessages, "No file provided")
+		json.NewEncoder(w).Encode(&jsonResponse)
 		return
 	}
 
 	// check whether the file is pdf
 	bytes, err := ioutil.ReadAll(file)
 	if err != nil {
-		jsonResponse.ErrorMessages = append(jsonResponse.ErrorMessages, "Corrupted file")
+		jsonResponse.FlashMessages = append(jsonResponse.FlashMessages, "Corrupted file")
+		json.NewEncoder(w).Encode(&jsonResponse)
 		return
 	}
 
 	mimeType := http.DetectContentType(bytes)
 	if mimeType != "application/pdf" {
-		jsonResponse.ErrorMessages = append(jsonResponse.ErrorMessages, "The file provided is not a pdf file")
+		jsonResponse.FlashMessages = append(jsonResponse.FlashMessages, "The file provided is not a pdf file")
+		json.NewEncoder(w).Encode(&jsonResponse)
 		return
 	}
 
@@ -47,7 +50,8 @@ func (c *jobsController) SubmitJob(w http.ResponseWriter, r *http.Request) {
 
 	filepath, err := c.filer.StoreFile(file, session.Username, fileHeader.Filename)
 	if err != nil {
-		jsonResponse.ErrorMessages = append(jsonResponse.ErrorMessages, "Could not store the file, ran out of memory")
+		jsonResponse.FlashMessages = append(jsonResponse.FlashMessages, "Could not store the file, ran out of memory")
+		json.NewEncoder(w).Encode(&jsonResponse)
 		return
 	}
 

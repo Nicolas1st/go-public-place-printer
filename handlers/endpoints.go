@@ -30,14 +30,16 @@ var DefaultEndpoints = Endpoints{
 	SignUpPage:        "/signup",
 	SignUpFormHandler: "/signup",
 
-	LogoutHandler:         "/logout",
-	ProfilePage:           "/profile",
-	PrinterPage:           "/printer",
-	SubmitJobHandler:      "/printer/jobs",
-	CancelJobHandler:      "/printer/jobs",
+	LogoutHandler: "/logout",
+	ProfilePage:   "/profile",
+	PrinterPage:   "/printer",
+
 	UpdateEmailHandler:    "/account/email",
 	UpdatePasswordHandler: "/account/password",
-	JobsApi:               "/jobs/",
+
+	JobsApi:          "/printer/jobs",
+	SubmitJobHandler: "/printer/jobs",
+	CancelJobHandler: "/printer/jobs",
 
 	UserManagerPage: "/admin/users",
 }

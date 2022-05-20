@@ -2,8 +2,6 @@ package model
 
 import "time"
 
-const ExpiryPeriod time.Duration = 5 * time.Minute
-
 type Session struct {
 	UserID    uint
 	Username  string
@@ -11,12 +9,12 @@ type Session struct {
 	ExpiresAt time.Time
 }
 
-func NewSession(user *User, username string) *Session {
+func NewSession(user *User, expiryTime time.Time) *Session {
 	return &Session{
 		User:      user,
 		UserID:    user.ID,
-		Username:  username,
-		ExpiresAt: time.Now().Add(ExpiryPeriod),
+		Username:  user.Name,
+		ExpiresAt: expiryTime,
 	}
 }
 

@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"printer/handlers"
 	"printer/handlers/views/pages"
-	"printer/persistence/model"
 )
 
 func (c *viewsController) buildLoginView(p *pages.Pages) http.HandlerFunc {
@@ -44,8 +43,7 @@ func (c *viewsController) handleLoginForm(w http.ResponseWriter, r *http.Request
 	}
 
 	// create session
-	session := model.NewSession(user, user.Name)
-	token, expiryTime := c.sessioner.StoreSession(session)
+	token, expiryTime := c.sessioner.StoreSession(user)
 
 	// set session cookie in the user's browser
 	handlers.SetAuthCookie(w, token, expiryTime)

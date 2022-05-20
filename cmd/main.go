@@ -10,6 +10,7 @@ import (
 	"printer/persistence/filer"
 	"printer/persistence/jobq"
 	"printer/persistence/session"
+	"time"
 )
 
 func main() {
@@ -19,7 +20,7 @@ func main() {
 
 	// set up database
 	db := db.NewDatabase(dsn)
-	sessioner := session.NewSessionStorage()
+	sessioner := session.NewSessionStorage(5 * time.Minute)
 	jobq := jobq.NewJobQueue()
 	filer := filer.NewFiler("./files", 2<<30)
 

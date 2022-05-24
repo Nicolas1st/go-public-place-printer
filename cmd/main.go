@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"printer/handlers"
 	"printer/handlers/api/jobs"
+	"printer/handlers/api/users"
 	"printer/handlers/views"
 	"printer/persistence/db"
 	"printer/persistence/filer"
@@ -44,5 +45,12 @@ func main() {
 		handlers.ForCommonUsers(sessioner, func(w http.ResponseWriter, r *http.Request) { jobs.ServeHTTP(w, r) }),
 	)
 
+	users := users.NewApi(db)
+	http.HandleFunc(
+		handlers.DefaultEndpoints.UsersApi,
+		handlers.ForAdmin(sessioner, func(w http.ResponseWriter, r *http.Request) { users.ServeHTTP(w, r) }),
+	)
+
+	fmt.Println("Started on http://" + server.Addr)
 	fmt.Println(server.ListenAndServe())
 }

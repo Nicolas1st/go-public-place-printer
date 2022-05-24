@@ -11,11 +11,13 @@ export const network = {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                NumberOfPages: numberOfPages,
+                numberOfPages: numberOfPages,
             }),
         });
 
-        return JSON.parse(JSON.stringify(await response.json()));
+        const resp = JSON.parse(JSON.stringify(await response.json()));
+
+        return resp.numberOfPages;
     },
 
     allowUsingPrinter: async function (userID) {
@@ -23,7 +25,9 @@ export const network = {
             method: "PATCH",
         });
 
-        return JSON.parse(JSON.stringify(await response.json()));
+        const resp = JSON.parse(JSON.stringify(await response.json()));
+
+        return resp.permission;
     },
 
     forbidUsingPrinter: async function (userID) {
@@ -31,6 +35,8 @@ export const network = {
             method: "PATCH",
         });
 
-        return JSON.parse(JSON.stringify(await response.json()));
-    },
+        const resp = JSON.parse(JSON.stringify(await response.json()));
+
+        return resp.permission;
+    }
 }

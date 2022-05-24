@@ -1,13 +1,37 @@
+import { network } from "./network.js"
 export function createUserComponent(
     id,
     name,
     printPermission,
     pagesPerMonthPermission,
     userEmail,
-    allowFunction,
-    forbidFunction,
-    setPagesFunction
 ) {
+    // create fields
+    const canPrintField = createCanPrintField(printPermission)
+    const pagesPerMonthField = createPagesPerMonthField(pagesPerMonthPermission)
+    const emailField = createEmailField(userEmail)
+    
+    // create controls
+    const allowPrintingButton = createAllowPrintingButton();
+    const forbidPrintingButton = createForbidPrintingButton();
+    const setNumberOfPagesInput = createNumberOfPagesPerMonthInput();
+
+    // add event handlers
+    allowPrintingButton.addEventListener("click", async () => {
+        canPrintField.innerText = await network.allowUsingPrinter(id);
+    });
+
+    forbidPrintingButton.addEventListener("click", async () => {
+        canPrintField.innerText = (await network.forbidUsingPrinter(id));
+    });
+
+    // add user form
+    setNumberOfPagesInput.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        pagesPerMonthField.innerText = await network.setNumberOfPages(id, Number(setNumberOfPagesInput.firstChild.value));
+        setNumberOfPagesInput.firstChild.value = "";
+    });
+
     // create user element
     const user = document.createElement("div");
     user.classList.add("user");
@@ -20,91 +44,118 @@ export function createUserComponent(
         user.appendChild(userName)
     }
 
-    // add user managment
+    // add body
     {
-        const userManagment = document.createElement("div");
-        userManagment.classList.add("user-managment");
-        user.appendChild(userManagment);
+        const userManagement = document.createElement("div");
+        userManagement.classList.add("user-managment");
 
-        // add user info
-        const userDetails = createUserDetails(printPermission, pagesPerMonthPermission, userEmail);
-        userManagment.appendChild(userDetails);
+        // add user details
+        const userDetails = createUserDetails(emailField, canPrintField, pagesPerMonthField);
+        userManagement.appendChild(userDetails);
 
         // add user controls
-        const userControls = createUserControls(id, allowFunction, forbidFunction, setPagesFunction);
-        userManagment.appendChild(userControls);
+        const userControls = createUserControls(allowPrintingButton, forbidPrintingButton, setNumberOfPagesInput);
+        userManagement.appendChild(userControls);
+
+        user.appendChild(userManagement);
     }
 
     return user;
 }
 
-function createUserDetails(printPermission, pagesPerMonthPermission, userEmail) {
+function createUserDetails(emailField, printPermissionField, pagesPerMonthField) {
     const userDetails = document.createElement("div");
     userDetails.classList.add("user-details");
 
-    const canPrint = document.createElement("p");
-    canPrint.innerText = printPermission;
-    canPrint.classList.add("user-info");
-    userDetails.appendChild(canPrint);
+    userDetails.appendChild(printPermissionField)
+    userDetails.appendChild(pagesPerMonthField)
+    userDetails.appendChild(emailField)
 
-    const pagesPerMonth = document.createElement("p");
-    pagesPerMonth.innerText = pagesPerMonthPermission;
-    pagesPerMonth.classList.add("user-info");
-    userDetails.appendChild(pagesPerMonth);
-
-    const Email = document.createElement("p");
-    Email.innerText = userEmail;
-    Email.classList.add("user-info");
-    userDetails.appendChild(Email);
-
-    return userDetails;
+    return userDetails 
 }
 
-function createUserControls(id, allowFunction, forbidFunction, setPagesFunction) {
+function createEmailField(userEmail) {
+    const email = document.createElement("p");
+    email.innerText = userEmail;
+    email.classList.add("user-info");
+
+    return email
+}
+
+function createCanPrintField(printPermission) {
+    const canPrintField = document.createElement("p");
+    canPrintField.innerText = printPermission;
+    canPrintField.classList.add("user-info");
+
+    return  canPrintField;
+}
+
+function createPagesPerMonthField(pagesPerMonthPermission) {
+    const pagesPerMonthField = document.createElement("p");
+    pagesPerMonthField.innerText = pagesPerMonthPermission;
+    pagesPerMonthField.classList.add("user-info");
+
+    return pagesPerMonthField
+}
+
+function createUserControls(
+    allowPrintingButton,
+    forbidPrintingButton,
+    setNumberOfPagesInput
+) {
     const userControls = document.createElement("div");
     userControls.classList.add("user-controls");
 
     // add userButtons
-    const userButtons = document.createElement("div");
-    userButtons.classList.add("user-buttons");
-    userControls.appendChild(userButtons);
+    {
+        const userButtons = document.createElement("div");
+        userButtons.classList.add("user-buttons");
 
-    // add allow printing button
+        userButtons.appendChild(allowPrintingButton);
+        userButtons.appendChild(forbidPrintingButton);
+
+        userControls.appendChild(userButtons);
+    }
+
+    userControls.appendChild(setNumberOfPagesInput);
+
+    return userControls;
+}
+
+function createAllowPrintingButton() {
     const allowPrintingButton = document.createElement("button");
+
     allowPrintingButton.classList.add("user-button");
     allowPrintingButton.classList.add("user-allow-printing");
-    allowPrintingButton.innerText = "Allow Printing"
-    allowPrintingButton.addEventListener("click", () => {
-        allowFunction(id);
-    });
-    userButtons.appendChild(allowPrintingButton);
+    allowPrintingButton.innerText = "Allow Printing";
 
-    // add forbid printing button
+    return allowPrintingButton;
+}
+
+function createForbidPrintingButton() {
     const forbidPrintingButton = document.createElement("button");
+
     forbidPrintingButton.classList.add("user-button");
     forbidPrintingButton.classList.add("user-forbid-printing");
     forbidPrintingButton.innerText = "Forbid Printing"
-    forbidPrintingButton.addEventListener("click", () => {
-        forbidFunction(id);
-    });
-    userButtons.appendChild(forbidPrintingButton);
 
-    // add user form
-    const userForm = document.createElement("form");
-    userForm.classList.add("user-form");
-    userControls.appendChild(userForm);
-    
-    const pageInput = document.createElement("input");
-    pageInput.type = "number";
-    pageInput.name = "nameNumberOfPages";
-    pageInput.placeholder = "Set Number Of Pages Per Month";
-    userForm.appendChild(pageInput);
+    return forbidPrintingButton;
+}
 
-    userForm.addEventListener("submit", (e) => {
-        e.preventDefault();
-        setPagesFunction(id, Number(pageInput.value));
-        pageInput.value = "";
-    });
+function createNumberOfPagesPerMonthInput() {
+    const pageInput = document.createElement("form");
+    pageInput.classList.add("user-form");
 
-    return userControls;
+    {
+        const pageInputBox = document.createElement("input");
+        pageInputBox.type = "number";
+        pageInputBox.placeholder = "Set Number Of Pages Per Month";
+        pageInput.appendChild(pageInputBox);
+
+        const submit = document.createElement("input");
+        submit.type = "submit";
+        pageInput.appendChild(submit);
+    }
+
+    return pageInput;
 }

@@ -11,10 +11,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             data.CanUsePrinter,
             data.PagesPerMonth,
             data.Email,
-            network.allowUsingPrinter,
-            network.forbidUsingPrinter,
-            network.setNumberOfPages,
         );
+
         userManager.appendChild(user);
     });
 });

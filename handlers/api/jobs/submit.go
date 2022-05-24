@@ -7,9 +7,13 @@ import (
 	"net/http"
 	"printer/handlers"
 	"printer/persistence/model"
+	"strings"
 )
 
 type SubmitJobResponseSchema struct {
+	Success       bool     `json:"success"`
+	JobID         string   `json:"jobID"`
+	Filename      string   `json:"filename"`
 	FlashMessages []string `json:"flashMessages"`
 }
 
@@ -47,8 +51,8 @@ func (c *jobsController) SubmitJob(w http.ResponseWriter, r *http.Request) {
 
 	// storing the file
 	file.Seek(0, io.SeekStart)
-
-	filepath, err := c.filer.StoreFile(file, session.Username, fileHeader.Filename)
+	filename := strings.ReplaceAll(fileHeader.Filename, " ", "")
+	filepath, err := c.filer.StoreFile(file, session.Username, filename)
 	if err != nil {
 		jsonResponse.FlashMessages = append(jsonResponse.FlashMessages, "Could not store the file, ran out of memory")
 		json.NewEncoder(w).Encode(&jsonResponse)
@@ -56,8 +60,12 @@ func (c *jobsController) SubmitJob(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// build job
-	job := model.NewJob(filepath, fileHeader.Filename, session.Username)
-	c.jobq.Enqueue(job)
+	job := model.NewJob(filepath, fileHeader.Filename, session.User)
+	jobID := c.jobq.Push(job)
+
+	jsonResponse.Success = true
+	jsonResponse.JobID = string(jobID)
+	jsonResponse.Filename = fileHeader.Filename
 
 	json.NewEncoder(w).Encode(&jsonResponse)
 }

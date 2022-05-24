@@ -15,9 +15,9 @@ type filerInterface interface {
 }
 
 type jobqInterface interface {
-	Enqueue(job *model.Job) model.JobID
+	Push(job *model.Job) model.JobID
 	CancelJob(jobID model.JobID)
-	GetAllJobs() []*model.Job
+	GetAllJobs() map[model.JobID]*model.Job
 }
 
 type jobsController struct {
@@ -35,9 +35,9 @@ func NewApi(jobq jobqInterface, filer filerInterface, sessioner handlers.Session
 
 	r := mux.NewRouter()
 
-	r.HandleFunc(handlers.DefaultEndpoints.JobsApi, handlers.ForAdmin(c.sessioner, c.GetAllJobs)).Methods(http.MethodGet)
+	r.HandleFunc(handlers.DefaultEndpoints.JobsApi, c.GetAllJobs).Methods(http.MethodGet)
 	r.HandleFunc(handlers.DefaultEndpoints.JobsApi, c.SubmitJob).Methods(http.MethodPost)
-	r.HandleFunc(handlers.DefaultEndpoints.JobsApi+"/{id:[0-9]+}", c.CancelJob).Methods(http.MethodDelete)
+	r.HandleFunc(handlers.DefaultEndpoints.JobsApi+"{id}", c.CancelJob).Methods(http.MethodDelete)
 
 	return r
 }

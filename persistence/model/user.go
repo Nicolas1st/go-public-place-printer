@@ -18,7 +18,7 @@ type User struct {
 	Email         string `gorm:"unique;size:128;not null"`
 	Role          Role   `gorm:"not null"`
 	PasswordHash  string `gorm:"not null"`
-	PagesPerMonth int    `gorm:"default:100"`
+	PagesPerMonth uint   `gorm:"default:100"`
 	CanUsePrinter bool   `gorm:"default:true"`
 }
 

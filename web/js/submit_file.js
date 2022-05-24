@@ -19,7 +19,6 @@ form.addEventListener("submit", (e) => {
         body: new FormData(form)
     })
     .then(response => {
-        alert("submited file");
         return response.json();
     })
     .then(json => {
@@ -61,10 +60,7 @@ function createJobElement(id, filename) {
             })
             .then(response => {
                 if (response.ok) {
-                    alert("canceled")
                     job.remove()
-                } else {
-                    alert("could not cancel")
                 }
             });
         });

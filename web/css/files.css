@@ -1,0 +1,107 @@
+.printer-main {
+    max-width: 1000px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.print-jobs {
+    width: 100%;
+    background-color: darkcyan;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border-radius: 30px;
+}
+
+.job-form-container {
+    max-height: 500px;
+    height: fit-content;
+    width: 100%;
+
+    padding: 30px;
+
+    color: black;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    border-radius: 30px;
+    background-color: darkcyan;
+}
+
+.job-form {
+    background-color: #fff;
+    border-radius: 22px;
+    padding: 30px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.job-name {
+    color: black;
+}
+
+.job {
+    color: black;
+    background-color: #fff;
+    padding: 30px;
+    margin: 0 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 22px;
+}
+
+.job:first-child {
+    margin-top: 30px;
+}
+
+.job:last-child {
+    margin-bottom: 30px;
+}
+
+.job-form-submit-button, .cancel-job-button {
+    display: block;
+    width: 140px;
+}
+
+.job-form-submit-button {
+    background-color: yellowgreen;
+}
+
+.cancel-job-button {
+    width: 140px;
+    height: 40px;
+    color: black;
+    padding: 10px;
+    font-size: 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: orange;
+}
+
+.submit-file-form {
+    display: flex;
+    justify-content: space-between;
+}
+
+.submit-file-form-fields {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.submit-file-form-messages {
+    width: 100%;
+}
+
+.form-error-message {
+    padding-top: 15px;
+    color: red;
+    font-size: 22px;
+}

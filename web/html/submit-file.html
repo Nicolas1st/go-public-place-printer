@@ -1,16 +1,16 @@
 {{ define "main" }}
-    <main class="main">
-        <div class="form-container">
+    <main class="main printer-main">
+        <div class="job-form-container">
             <h1> Print File </h1>
-            <form action="{{ .Endpoints.SubmitJobHandler }}" method="post" enctype="multipart/form-data" class="form">
-                <div class="form-fields">
-                    <div class="form-field">
-                        <label for="file"> File </label>
-                        <input type="file" name="file" id="file" required>
-                    </div>
+            <form action="{{ .Endpoints.SubmitJobHandler }}" method="post" enctype="multipart/form-data" class="job-form" id="submit-file-form">
+                <div class="submit-file-form-fields">
+                    <input type="file" name="file" id="file" required>
+                    <input type="submit" class="job-form-submit-button">
                 </div>
-                <input type="submit" class="form-submit-button">
+                <div class="submit-file-form-messages"></div>
             </form>
         </div>
+        <aside class="print-jobs"></aside>
     </main>
+    <script src="static/js/submit_file.js"></script>
 {{ end }}

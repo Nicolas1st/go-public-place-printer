@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os/exec"
 	"printer/persistence/model"
+	"strings"
 )
 
 type JobQueue struct {
@@ -22,10 +23,13 @@ func (q *JobQueue) Push(job *model.Job) model.JobID {
 	// отправить файл на принтер
 	cmd := fmt.Sprintf("lp %v | cut -d ' ' -f 4", job.StoredFilePath)
 	command := exec.Command("bash", "-c", cmd)
-	idRaw, _ := command.CombinedOutput()
-	jobID := model.JobID(idRaw)
+	idOut, _ := command.CombinedOutput()
+
+	// убрать \n
+	jobID := model.JobID(strings.Replace(string(idOut), "\n", "", -1))
 
 	// сохранить работу
+	job.ID = jobID
 	q.jobs[jobID] = job
 
 	return jobID

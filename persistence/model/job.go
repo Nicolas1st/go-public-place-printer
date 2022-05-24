@@ -2,34 +2,19 @@ package model
 
 type JobStatus int
 
-const (
-	StatusCancelled = iota
-	StatusToBeDone
-)
-
-type JobID uint
+type JobID string
 
 type Job struct {
-	ID                JobID
-	SubmittedFileName string
+	ID                JobID  `json:"id"`
+	SubmittedFileName string `json:"filename"`
 	StoredFilePath    string
-	Username          string
-	Status            JobStatus
+	User              *User
 }
 
-func NewJob(storedFilePath, submittedFileName, username string) *Job {
+func NewJob(storedFilePath, submittedFileName string, user *User) *Job {
 	return &Job{
 		StoredFilePath:    storedFilePath,
 		SubmittedFileName: submittedFileName,
-		Username:          username,
-		Status:            StatusToBeDone,
+		User:              user,
 	}
-}
-
-func (j *Job) CancelJob() {
-	j.Status = StatusCancelled
-}
-
-func (j *Job) SetID(id JobID) {
-	j.ID = id
 }

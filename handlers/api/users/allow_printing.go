@@ -1,11 +1,16 @@
 package users
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 
 	"github.com/gorilla/mux"
 )
+
+type AllowUsingPrinterResponse struct {
+	Permission bool `json:"permission"`
+}
 
 // AllowUsingPrinter - allows specified user to user printer,
 // provided his page limit per month is not exceeded
@@ -18,8 +23,11 @@ func (controller userController) AllowUsingPrinter(w http.ResponseWriter, r *htt
 		return
 	}
 
-	err = controller.db.AllowUsingPrinter(uint(userID))
+	permission, err := controller.db.AllowUsingPrinter(uint(userID))
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
+	} else {
+		jsonResponse := AllowUsingPrinterResponse{Permission: permission}
+		json.NewEncoder(w).Encode(&jsonResponse)
 	}
 }

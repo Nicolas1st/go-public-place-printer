@@ -1,11 +1,16 @@
 package users
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 
 	"github.com/gorilla/mux"
 )
+
+type DeleteUserResponse struct {
+	Result string `json:"result"`
+}
 
 // DeleteUser - deletes one user if id is provided
 func (controller userController) DeleteUser(w http.ResponseWriter, r *http.Request) {
@@ -20,5 +25,8 @@ func (controller userController) DeleteUser(w http.ResponseWriter, r *http.Reque
 	err = controller.db.DeleteUserByID(uint(id))
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
+	} else {
+		jsonResponse := DeleteUserResponse{Result: "deleted"}
+		json.NewEncoder(w).Encode(&jsonResponse)
 	}
 }

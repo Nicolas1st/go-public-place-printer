@@ -9,7 +9,7 @@ type databaseInterface interface {
 	GetUserByID(id uint) (*model.User, error)
 
 	// permissions
-	SetPagesPerMonth(id uint, pagesPerMonth int) error
-	AllowUsingPrinter(userID uint) error
-	ForbidUsingPrinter(userID uint) error
+	SetPagesPerMonth(userID uint, pagesPerMonth uint) (uint, error)
+	AllowUsingPrinter(userID uint) (bool, error)
+	ForbidUsingPrinter(userID uint) (bool, error)
 }

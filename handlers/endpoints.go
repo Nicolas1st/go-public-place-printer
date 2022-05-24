@@ -38,11 +38,11 @@ var DefaultEndpoints = Endpoints{
 	UpdateEmailHandler:    "/account/email",
 	UpdatePasswordHandler: "/account/password",
 
-	JobsApi:          "/printer/jobs",
-	SubmitJobHandler: "/printer/jobs",
-	CancelJobHandler: "/printer/jobs",
+	JobsApi:          "/printer/jobs/",
+	SubmitJobHandler: "/printer/jobs/",
+	CancelJobHandler: "/printer/jobs/",
 
-	UsersApi: "/users",
+	UsersApi: "/users/",
 
 	UserManagerPage: "/admin/users",
 }

@@ -1,61 +1,43 @@
 package jobq
 
 import (
+	"fmt"
+	"os/exec"
 	"printer/persistence/model"
 )
 
 type JobQueue struct {
-	JobIDGenerator *JobIDGenerator
-	queue          chan *model.Job
-	jobsList       map[model.JobID]*model.Job // it's a map to make removal constant time
+	jobs map[model.JobID]*model.Job
 }
 
+// NewJobQueue - создать новую очередь задач
 func NewJobQueue() *JobQueue {
 	return &JobQueue{
-		JobIDGenerator: newJobIDGenerator(),
-		queue:          make(chan *model.Job, 20),
-		jobsList:       map[model.JobID]*model.Job{},
+		jobs: map[model.JobID]*model.Job{},
 	}
 }
 
-// Enqueue - adds job to the queue
-func (q *JobQueue) Enqueue(job *model.Job) model.JobID {
-	jobID := q.JobIDGenerator.newJobID()
-	job.SetID(jobID)
+// Enqueue - добавляет работу к очереди
+func (q *JobQueue) Push(job *model.Job) model.JobID {
+	// отправить файл на принтер
+	cmd := fmt.Sprintf("lp %v | cut -d ' ' -f 4", job.StoredFilePath)
+	command := exec.Command("bash", "-c", cmd)
+	idRaw, _ := command.CombinedOutput()
+	jobID := model.JobID(idRaw)
 
-	// push the job on to the queue
-	q.queue <- job
-
-	// store job for viewing
-	q.jobsList[jobID] = job
+	// сохранить работу
+	q.jobs[jobID] = job
 
 	return jobID
 }
 
-// Dequeue - returns a non empty job, blocks execution when called, if not jobs are available
-func (q *JobQueue) Dequeue() *model.Job {
-	for {
-		job := <-q.queue
-		if job.Status != model.StatusCancelled {
-			delete(q.jobsList, job.ID)
-			return job
-		}
-	}
-}
-
-// Cancel - cancels job
+// Cancel - отменить работу
 func (q *JobQueue) CancelJob(jobID model.JobID) {
-	job, ok := q.jobsList[jobID]
-	if ok {
-		job.CancelJob()
-	}
+	exec.Command("cancel", string(jobID)).Run()
+	delete(q.jobs, jobID)
 }
 
-func (q *JobQueue) GetAllJobs() []*model.Job {
-	jobs := []*model.Job{}
-	for _, v := range q.jobsList {
-		jobs = append(jobs, v)
-	}
-
-	return jobs
+// GetAllJobs - вернуть все работы на принтере
+func (q *JobQueue) GetAllJobs() map[model.JobID]*model.Job {
+	return q.jobs
 }

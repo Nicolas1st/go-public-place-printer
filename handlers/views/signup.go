@@ -44,6 +44,8 @@ func (c *viewsController) handleSignUpForm(w http.ResponseWriter, r *http.Reques
 	// check passwords match
 	if password != repeatPassword {
 		messages.Add("The passwords do not match", pages.ErrorMessage)
+	} else if len(password) < 8 {
+		messages.Add("The password must contain 8 or more characters", pages.ErrorMessage)
 	}
 
 	if !messages.HasErrorMessages() {
@@ -52,5 +54,5 @@ func (c *viewsController) handleSignUpForm(w http.ResponseWriter, r *http.Reques
 		return messages, err == nil
 	}
 
-	return messages, true
+	return messages, false
 }

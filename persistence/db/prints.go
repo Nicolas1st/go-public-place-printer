@@ -2,25 +2,23 @@ package db
 
 import "printer/persistence/model"
 
-func (wrapper *Database) SavePrint(username, submittedFileName, storedFileName string, numberOfPages int) error {
-	user := model.User{}
-
-	if result := wrapper.db.Where("Name = ?", username).First(&user); result.Error != nil {
-		return result.Error
-	}
-
+func (wrapper *Database) SavePrint(user model.User, filename string, numberOfPages int) error {
 	print := model.Print{
-		SubmittedFileName: submittedFileName,
-		StoredFileName:    storedFileName,
-		NumberOfPages:     numberOfPages,
-		User:              user,
+		NumberOfPages: numberOfPages,
+		Filename:      filename,
+		User:          user,
 	}
 
-	if result := wrapper.db.Create(&print); result.Error != nil {
-		return result.Error
-	}
+	result := wrapper.db.Create(&print)
 
-	return nil
+	return result.Error
+}
+
+func (wrapper *Database) GetAllPrints() []model.Print {
+	var prints []model.Print
+	wrapper.db.Find(&prints)
+
+	return prints
 }
 
 func (wrapper *Database) GetAllPrintsByUID(UID uint) []model.Print {

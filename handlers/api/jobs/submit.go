@@ -2,11 +2,14 @@ package jobs
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
+	"os/exec"
 	"printer/handlers"
 	"printer/persistence/model"
+	"strconv"
 	"strings"
 )
 
@@ -58,6 +61,13 @@ func (c *jobsController) SubmitJob(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(&jsonResponse)
 		return
 	}
+
+	// сохранить лог о количестве страниц в документе
+	cmd := fmt.Sprintf("pdfinfo %v | awk '/^Pages:/ {print $2}'", filename)
+	command := exec.Command("bash", "-c", cmd)
+	out, _ := command.CombinedOutput()
+	numberOfPages, _ := strconv.Atoi(string(out))
+	c.logger.SavePrint(*session.User, filename, numberOfPages)
 
 	// build job
 	job := model.NewJob(filepath, fileHeader.Filename, session.User)

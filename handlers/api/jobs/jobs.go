@@ -24,13 +24,19 @@ type jobsController struct {
 	jobq      jobqInterface
 	filer     filerInterface
 	sessioner handlers.Sessioner
+	logger    Logger
 }
 
-func NewApi(jobq jobqInterface, filer filerInterface, sessioner handlers.Sessioner) *mux.Router {
+type Logger interface {
+	SavePrint(user model.User, filename string, numberOfPages int) error
+}
+
+func NewApi(jobq jobqInterface, filer filerInterface, sessioner handlers.Sessioner, logger Logger) *mux.Router {
 	c := &jobsController{
 		jobq:      jobq,
 		filer:     filer,
 		sessioner: sessioner,
+		logger:    logger,
 	}
 
 	r := mux.NewRouter()

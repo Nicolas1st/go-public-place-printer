@@ -30,9 +30,9 @@ func (m *FlashMessages) Add(content string, t messageType) {
 func (m *FlashMessages) HasErrorMessages() bool {
 	for _, message := range m.messages {
 		if message.messageType == ErrorMessage {
-			return false
+			return true
 		}
 	}
 
-	return true
+	return false
 }

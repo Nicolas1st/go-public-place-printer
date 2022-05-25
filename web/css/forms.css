@@ -1,8 +1,9 @@
 .form-container {
-    max-height: 500px;
+    max-height: 600px;
     height: fit-content;
+    min-height: 340px;
     width: 30%;
-    min-width: 300px;
+    width: 330px;
 
     padding: 30px;
 
@@ -43,7 +44,6 @@ input {
   width: 100%;
 }
 
-/* input[type=text], input[type=password], input[type=email] { */
 input {
     font-size: 20px;
     height: 40px;

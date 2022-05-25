@@ -23,10 +23,10 @@ func (q *JobQueue) Push(job *model.Job) model.JobID {
 	// отправить файл на принтер
 	cmd := fmt.Sprintf("lp %v | cut -d ' ' -f 4", job.StoredFilePath)
 	command := exec.Command("bash", "-c", cmd)
-	idOut, _ := command.CombinedOutput()
+	out, _ := command.CombinedOutput()
 
 	// убрать \n
-	jobID := model.JobID(strings.Replace(string(idOut), "\n", "", -1))
+	jobID := model.JobID(strings.Replace(string(out), "\n", "", -1))
 
 	// сохранить работу
 	job.ID = jobID

@@ -30,7 +30,7 @@ func (wrapper *Database) CreateAdmin(name, email, password string) error {
 // CreateNewUser - creates new user, if it's not possible an error value is returned
 // password hashing is performed by this function
 func (wrapper *Database) CreateNewUser(name, email, password string) error {
-	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), 16)
+	passwordHash, err := hashPassword(password)
 	if err != nil {
 		return errors.New("could not hash the password")
 	}
@@ -50,6 +50,12 @@ func (wrapper *Database) DeleteUserByID(id uint) error {
 	result := wrapper.db.Delete(&model.User{}, id)
 
 	return result.Error
+}
+
+func (wrapper *Database) GetPageLimit(id uint) (uint, error) {
+	user, err := wrapper.GetUserByID(id)
+
+	return user.PagesPerMonth, err
 }
 
 // GetUserByID - retrieve one user by id
@@ -82,4 +88,9 @@ func (wrapper *Database) GetAllUsers() []model.User {
 	wrapper.db.Find(&users)
 
 	return users
+}
+
+func hashPassword(password string) (string, error) {
+	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), 16)
+	return string(passwordHash), err
 }

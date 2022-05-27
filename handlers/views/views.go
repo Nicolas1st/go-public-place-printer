@@ -11,6 +11,10 @@ type database interface {
 	GetUserByName(username string) (*model.User, error)
 	GetUserByEmail(username string) (*model.User, error)
 	CreateNewUser(username, email, password string) error
+	GetAllPrints() []model.Print
+	GetAllPrintsByUID(UID uint) []model.Print
+	GetPrintsForDayNDaysAgo(daysAgo int) ([]model.Print, error)
+	GetAllPrintsByUsername(username string) []model.Print
 }
 
 type sessioner interface {
@@ -30,6 +34,10 @@ type views struct {
 	SignUp      http.HandlerFunc
 	Printer     http.HandlerFunc
 	UserManager http.HandlerFunc
+	Stats       http.HandlerFunc
+	Prints      http.HandlerFunc
+	UserPrints  http.HandlerFunc
+	FileRemoved http.HandlerFunc
 }
 
 func NewViews(htmlTemplatesPath string, database database, sessioner sessioner) *views {
@@ -44,5 +52,9 @@ func NewViews(htmlTemplatesPath string, database database, sessioner sessioner) 
 		SignUp:      c.buildSignUpView(pages),
 		Printer:     c.buildPrinterView(pages),
 		UserManager: c.buildUserManagerView(pages),
+		Stats:       c.buildStatsView(pages),
+		Prints:      c.buildPrintsView(pages),
+		UserPrints:  c.buildUserPrintsView(pages),
+		FileRemoved: c.buildFileRemovedView(pages),
 	}
 }

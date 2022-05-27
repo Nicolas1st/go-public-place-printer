@@ -23,7 +23,7 @@ func (c *viewsController) buildSignUpView(p *pages.Pages) http.HandlerFunc {
 }
 
 func (c *viewsController) handleSignUpForm(w http.ResponseWriter, r *http.Request) (*pages.FlashMessages, bool) {
-	// extract data from form
+	// достать данные из формы
 	username := r.PostFormValue("username")
 	email := r.PostFormValue("email")
 	password := r.PostFormValue("password")
@@ -31,25 +31,30 @@ func (c *viewsController) handleSignUpForm(w http.ResponseWriter, r *http.Reques
 
 	messages := pages.NewFlashMessages()
 
-	// check username uniqness
+	// проверить уникальность логина
 	if _, err := c.db.GetUserByName(username); err == nil {
-		messages.Add("The username provided is already occupied", pages.ErrorMessage)
+		messages.Add("Логин уже занят", pages.ErrorMessage)
 	}
 
-	// check email uniqness
-	if _, err := c.db.GetUserByEmail(email); err != nil {
-		messages.Add("The email provided is already occupied", pages.ErrorMessage)
+	// проверить уникальность email
+	if _, err := c.db.GetUserByEmail(email); err == nil {
+		messages.Add("Email уже занят", pages.ErrorMessage)
 	}
 
-	// check passwords match
+	// проверить длину логина
+	if len(username) < 8 || len(username) > 20 {
+		messages.Add("Логин должен иметь длину от 8 до 20 символов", pages.ErrorMessage)
+	}
+
+	// проверить совпадение паролей
 	if password != repeatPassword {
-		messages.Add("The passwords do not match", pages.ErrorMessage)
+		messages.Add("Пароли не совадают", pages.ErrorMessage)
 	} else if len(password) < 8 {
-		messages.Add("The password must contain 8 or more characters", pages.ErrorMessage)
+		messages.Add("Пароль должен состоять из более чем 8 символов", pages.ErrorMessage)
 	}
 
 	if !messages.HasErrorMessages() {
-		// create a new account
+		// создать новый аккаунт
 		err := c.db.CreateNewUser(username, email, password)
 		return messages, err == nil
 	}

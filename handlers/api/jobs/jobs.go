@@ -28,7 +28,10 @@ type jobsController struct {
 }
 
 type Logger interface {
-	SavePrint(user model.User, filename string, numberOfPages int) error
+	SavePrint(user model.User, filename, filepath string, numberOfPages int) error
+	GetNumberOfPagesPrintedByUserDuringTheLastMonth(uid uint) int
+	GetUserByID(id uint) (*model.User, error)
+	GetPageLimit(id uint) (uint, error)
 }
 
 func NewApi(jobq jobqInterface, filer filerInterface, sessioner handlers.Sessioner, logger Logger) *mux.Router {

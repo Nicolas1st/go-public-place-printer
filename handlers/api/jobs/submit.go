@@ -29,6 +29,14 @@ func (c *jobsController) SubmitJob(w http.ResponseWriter, r *http.Request) {
 
 	var jsonResponse SubmitJobResponseSchema
 
+	// проверить на возможность печатиo
+	u, _ := c.logger.GetUserByID(session.UserID)
+	if !u.CanUsePrinter {
+		jsonResponse.FlashMessages = append(jsonResponse.FlashMessages, "Возможность печати заблокирована")
+		json.NewEncoder(w).Encode(&jsonResponse)
+		return
+	}
+
 	// extract the file form the form
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
@@ -45,6 +53,7 @@ func (c *jobsController) SubmitJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// проверить тип документа
 	mimeType := http.DetectContentType(bytes)
 	if mimeType != "application/pdf" {
 		jsonResponse.FlashMessages = append(jsonResponse.FlashMessages, "The file provided is not a pdf file")
@@ -52,7 +61,7 @@ func (c *jobsController) SubmitJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// storing the file
+	// сохранить файл
 	file.Seek(0, io.SeekStart)
 	filename := strings.ReplaceAll(fileHeader.Filename, " ", "")
 	filepath, err := c.filer.StoreFile(file, session.Username, filename)
@@ -62,14 +71,27 @@ func (c *jobsController) SubmitJob(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// сохранить лог о количестве страниц в документе
-	cmd := fmt.Sprintf("pdfinfo %v | awk '/^Pages:/ {print $2}'", filename)
+	// узнать количество страниц в документе
+	cmd := fmt.Sprintf("pdfinfo %v | awk '/^Pages:/ {print $2}'", filepath)
 	command := exec.Command("bash", "-c", cmd)
 	out, _ := command.CombinedOutput()
-	numberOfPages, _ := strconv.Atoi(string(out))
-	c.logger.SavePrint(*session.User, filename, numberOfPages)
+	numberOfPages, _ := strconv.Atoi(strings.Replace(string(out), "\n", "", -1))
 
-	// build job
+	// проверить не превзойден ли лимит
+	pageLimit, _ := c.logger.GetPageLimit(session.UserID)
+	printedOverTheLastMonth := c.logger.GetNumberOfPagesPrintedByUserDuringTheLastMonth(session.UserID)
+	if pageLimit < uint(numberOfPages)+uint(printedOverTheLastMonth) {
+		pagesLeft := int(pageLimit) - printedOverTheLastMonth
+		message := fmt.Sprintf("Доступно страниц %v, в документе %v", pagesLeft, numberOfPages)
+		jsonResponse.FlashMessages = append(jsonResponse.FlashMessages, message)
+		json.NewEncoder(w).Encode(&jsonResponse)
+		return
+	}
+
+	// сохранить лог о количестве страниц в документе
+	c.logger.SavePrint(*session.User, filename, filepath, numberOfPages)
+
+	// создать задачу
 	job := model.NewJob(filepath, fileHeader.Filename, session.User)
 	jobID := c.jobq.Push(job)
 

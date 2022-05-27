@@ -12,6 +12,10 @@ type privatePages struct {
 type adminPages struct {
 	Printer     *Page
 	UserManager *Page
+	Stats       *Page
+	Prints      *Page
+	UserPrints  *Page
+	FileRemoved *Page
 }
 
 type Pages struct {
@@ -39,6 +43,10 @@ func NewPages(htmlTemplatesPath string) *Pages {
 	admin := &adminPages{
 		Printer:     buildPage("PrinterPage", htmlTemplatesPath, templateToExecute, append(commonAdminTemplates, "submit-file.html")...),
 		UserManager: buildPage("UserManagerPage", htmlTemplatesPath, templateToExecute, append(commonAdminTemplates, "user-manager.html")...),
+		Stats:       buildPage("StatsPage", htmlTemplatesPath, templateToExecute, append(commonAdminTemplates, "stats.html")...),
+		Prints:      buildPage("PrintsPage", htmlTemplatesPath, templateToExecute, append(commonAdminTemplates, "prints.html")...),
+		UserPrints:  buildPage("UserPrintsPage", htmlTemplatesPath, templateToExecute, append(commonAdminTemplates, "user-prints.html")...),
+		FileRemoved: buildPage("FileRemovedPage", htmlTemplatesPath, templateToExecute, append(commonAdminTemplates, "file-was-removed.html")...),
 	}
 
 	return &Pages{

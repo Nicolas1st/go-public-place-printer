@@ -8,8 +8,8 @@ const (
 )
 
 type flashMessage struct {
-	content     string
-	messageType messageType
+	Content     string
+	MessageType messageType
 }
 
 type FlashMessages struct {
@@ -23,13 +23,13 @@ func NewFlashMessages() *FlashMessages {
 func (m *FlashMessages) Add(content string, t messageType) {
 	m.messages = append(
 		m.messages,
-		flashMessage{content: content, messageType: t},
+		flashMessage{Content: content, MessageType: t},
 	)
 }
 
 func (m *FlashMessages) HasErrorMessages() bool {
 	for _, message := range m.messages {
-		if message.messageType == ErrorMessage {
+		if message.MessageType == ErrorMessage {
 			return true
 		}
 	}

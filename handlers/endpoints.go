@@ -11,7 +11,6 @@ type Endpoints struct {
 
 	// Private
 	LogoutHandler         string
-	ProfilePage           string
 	PrinterPage           string
 	SubmitJobHandler      string
 	CancelJobHandler      string
@@ -19,9 +18,15 @@ type Endpoints struct {
 	UpdatePasswordHandler string
 	JobsApi               string
 	UsersApi              string
+	AccountsApi           string
+	StatsApi              string
 
 	// Admin
 	UserManagerPage string
+	StatsPage       string
+	PrintsPage      string
+	UserPrintsPage  string
+	FileRemovedPage string
 }
 
 var DefaultEndpoints = Endpoints{
@@ -32,7 +37,6 @@ var DefaultEndpoints = Endpoints{
 	SignUpFormHandler: "/signup",
 
 	LogoutHandler: "/logout",
-	ProfilePage:   "/profile",
 	PrinterPage:   "/printer",
 
 	UpdateEmailHandler:    "/account/email",
@@ -42,7 +46,13 @@ var DefaultEndpoints = Endpoints{
 	SubmitJobHandler: "/printer/jobs/",
 	CancelJobHandler: "/printer/jobs/",
 
-	UsersApi: "/users/",
+	UsersApi:    "/users/",
+	AccountsApi: "/accounts/",
+	StatsApi:    "/stats/",
 
 	UserManagerPage: "/admin/users",
+	StatsPage:       "/stats",
+	PrintsPage:      "/prints",
+	UserPrintsPage:  "/user-prints",
+	FileRemovedPage: "/file/status/removed",
 }

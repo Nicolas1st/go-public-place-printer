@@ -1,0 +1,21 @@
+{{ define "main" }}
+    <main class="main main-user-prints">
+        <div class="page-container">
+            <div class="user-prints-container">
+                <h1> Печати Пользователя {{ .Data.Username }} </h1>
+                <div class="user-prints">
+                    {{ range .Data.Prints }}
+                        <div class="print">
+                            <div class="print-file">
+                                <p class="print-filename">Файл: <a href="{{ .Filepath }}"> {{ .Filename }}</a></p>
+                                <p> {{ .NumberOfPages }} стр. </p>
+                            </div>
+                        </div>
+                    {{ else }}
+                        <p class="print-info"> В Этот День Не Было Ничего Напечатано </p>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+    </main>
+{{ end }}

@@ -1,6 +1,6 @@
 .user-manager {
     background-color: darkcyan;
-    width: 100%;
+    width: 90%;
     height: 100%;
     overflow-y: scroll;
     padding: 30px;
@@ -21,14 +21,13 @@
 }
 
 
-.user-manager::-webkit-scrollbar {
+.user-manager::-webkit-scrollbar, .user-details::-webkit-scrollbar {
   display: none;
 }
 
-/* Hide scrollbar for IE, Edge and Firefox */
-.user-manager {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+.user-manager, .user-details {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .user {
@@ -42,11 +41,12 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 10px;
+    gap: 16px;
 }
 
 .user-managment {
   display: flex;
+  justify-content: space-between;
   gap: 30px;
 }
 
@@ -73,6 +73,7 @@
 }
 
 .user-details {
+  flex-grow: 1;
   height: 100%;
   width: fit-content;
   display: flex;
@@ -81,6 +82,7 @@
   background-color: gray;
   padding: 10px;
   border-radius: 10px;
+  overflow: scroll;
 }
 
 .users {
@@ -97,4 +99,61 @@
   flex-direction: column;
   gap: 8px;
   background-color: gray;
+}
+
+.user-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media screen and (max-width: 1050px) {
+  .user-managment {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .user-details {
+    height: fit-content;
+  }
+  
+  .user-controls {
+    width: 100%;
+    display: flex;
+    gap: 30px;
+    justify-content: space-between;
+    flex-direction: row;
+  }
+
+  .user-buttons {
+    width: 40%;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .user-button {
+    width: 100%;
+  }
+
+  .user-form {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+}
+
+@media screen and (max-width: 1050px) {
+  .user-manager {
+    width: 100%;
+  }
+
+  .user-controls {
+    flex-direction: column-reverse;
+    gap: 15px;
+  }
+
+  .user-form, .user-buttons {
+    width: 100%;
+  }
 }

@@ -18,17 +18,17 @@ export function createUserComponent(
 
     // add event handlers
     allowPrintingButton.addEventListener("click", async () => {
-        canPrintField.innerText = await network.allowUsingPrinter(id);
+        canPrintField.innerText = presentPermission(await network.allowUsingPrinter(id))
     });
 
     forbidPrintingButton.addEventListener("click", async () => {
-        canPrintField.innerText = (await network.forbidUsingPrinter(id));
+        canPrintField.innerText = presentPermission(await network.forbidUsingPrinter(id))
     });
 
     // add user form
     setNumberOfPagesInput.addEventListener("submit", async (e) => {
         e.preventDefault();
-        pagesPerMonthField.innerText = await network.setNumberOfPages(id, Number(setNumberOfPagesInput.firstChild.value));
+        pagesPerMonthField.innerText = presentPageLimit(await network.setNumberOfPages(id, Number(setNumberOfPagesInput.firstChild.value)));
         setNumberOfPagesInput.firstChild.value = "";
     });
 
@@ -76,7 +76,7 @@ function createUserDetails(emailField, printPermissionField, pagesPerMonthField)
 
 function createEmailField(userEmail) {
     const email = document.createElement("p");
-    email.innerText = userEmail;
+    email.innerText = "Email " + userEmail;
     email.classList.add("user-info");
 
     return email
@@ -84,7 +84,7 @@ function createEmailField(userEmail) {
 
 function createCanPrintField(printPermission) {
     const canPrintField = document.createElement("p");
-    canPrintField.innerText = printPermission;
+    canPrintField.innerText = presentPermission(printPermission)
     canPrintField.classList.add("user-info");
 
     return  canPrintField;
@@ -92,7 +92,7 @@ function createCanPrintField(printPermission) {
 
 function createPagesPerMonthField(pagesPerMonthPermission) {
     const pagesPerMonthField = document.createElement("p");
-    pagesPerMonthField.innerText = pagesPerMonthPermission;
+    pagesPerMonthField.innerText = presentPageLimit(pagesPerMonthPermission);
     pagesPerMonthField.classList.add("user-info");
 
     return pagesPerMonthField
@@ -127,7 +127,7 @@ function createAllowPrintingButton() {
 
     allowPrintingButton.classList.add("user-button");
     allowPrintingButton.classList.add("user-allow-printing");
-    allowPrintingButton.innerText = "Allow Printing";
+    allowPrintingButton.innerText = "Разрешить Печать";
 
     return allowPrintingButton;
 }
@@ -137,7 +137,7 @@ function createForbidPrintingButton() {
 
     forbidPrintingButton.classList.add("user-button");
     forbidPrintingButton.classList.add("user-forbid-printing");
-    forbidPrintingButton.innerText = "Forbid Printing"
+    forbidPrintingButton.innerText = "Запретить Печать"
 
     return forbidPrintingButton;
 }
@@ -149,13 +149,26 @@ function createNumberOfPagesPerMonthInput() {
     {
         const pageInputBox = document.createElement("input");
         pageInputBox.type = "number";
-        pageInputBox.placeholder = "Set Number Of Pages Per Month";
+        pageInputBox.placeholder = "Количество Страниц В Месяц";
         pageInput.appendChild(pageInputBox);
 
         const submit = document.createElement("input");
         submit.type = "submit";
+        submit.value="Изменить"
         pageInput.appendChild(submit);
     }
 
     return pageInput;
+}
+
+function presentPermission(permission) {
+    if (permission) {
+        return "Может Печатать";
+    }
+
+    return "Не Может Печатать";
+}
+
+function presentPageLimit(pages) {
+    return "Лимит: " + pages;
 }

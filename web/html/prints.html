@@ -1,0 +1,32 @@
+{{ define "main" }}
+    <main class="main main-prints">
+        <div class="prints-page-part">
+            <h2 class="prints-page-part-heading"> День </h2>
+            <div class="days">
+                {{$urlRoot:=.Endpoints.PrintsPage}}
+                {{ range .Data.Days }}
+                    <div class="day">
+                        <a href="{{ $urlRoot }}?day={{ . }}"> Печати {{ . }} Дней Назад </a>
+                    </div>
+                {{ end }}
+            </div>
+        </div>
+        <div class="prints-page-part">
+            <h2 class="prints-page-part-heading"> Печати </h2>
+            <div class="prints">
+                {{$urlRoot:=.Endpoints.UserPrintsPage}}
+                {{ range .Data.Prints }}
+                    <div class="print">
+                        <p> Пользователь: <a href="{{ $urlRoot }}?username={{ .Username }}"> {{ .Username }} </a> </p>
+                        <div class="print-file">
+                            <p class="print-filename">Файл: <a href="{{ .Filepath }}"> {{ .Filename }}</a></p>
+                            <p class="print-file-pages"> {{ .NumberOfPages }} стр. </p>
+                        </div>
+                    </div>
+                {{ else }}
+                    <p class="print-info"> В Этот День Не Было Ничего Напечатано </p>
+                {{ end }}
+            </div>
+        </div>
+    </main>
+{{ end }}

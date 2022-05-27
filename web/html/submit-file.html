@@ -4,7 +4,7 @@
             <h1> Print File </h1>
             <form action="{{ .Endpoints.SubmitJobHandler }}" method="post" enctype="multipart/form-data" class="job-form" id="submit-file-form">
                 <div class="submit-file-form-fields">
-                    <input type="file" name="file" id="file" required>
+                    <input type="file" name="file" id="file" class="job-form-file" required>
                     <input type="submit" class="job-form-submit-button" value="Send">
                 </div>
                 <div class="submit-file-form-messages"></div>

@@ -1,24 +1,7 @@
 {{ define "main" }}
-    <main>
-        {{ range .Users }}
-        <div class="user">
-            <div class="user-info">
-                <p> {{ .Name }}</p>
-                <p> {{ .Email }}</p>
-            </div>
-            <div class="user-controls">
-                <button> Ban User </button>
-                <div>
-                    <p>Change Monthly Page Limit</p>
-                    <form action="">
-                        <div>
-                            <label for="numberOfPages"></label>
-                            <input type="number" name="numberOfPages" id="numberOfPages">
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        {{ end }}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <main class="main">
+        <canvas id="bar-chart"></canvas>
     </main>
+    <script src="/static/js/stats.js"></script>
 {{ end }}

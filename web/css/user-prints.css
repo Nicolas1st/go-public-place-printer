@@ -1,0 +1,56 @@
+.main-user-prints {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.user-prints-container {
+    height: 100%;
+    width: 60%;
+    margin: auto;
+    padding: 30px;
+    border-radius: 30px;
+    background-color: darkcyan;
+
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.page-container {
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.user-prints {
+    max-height: 100%;
+    overflow: scroll;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* get rid of navbar */
+.user-prints::-webkit-scrollbar {
+  display: none;
+}
+
+.user-prints {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media screen and (max-width: 600px) {
+    .user-prints-container {
+        width: 350px;
+    }
+    .print-filename {
+        width: 100%;
+    }
+
+    .print-file {
+        display: flex;
+        flex-direction: column;
+    }
+}

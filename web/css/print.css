@@ -1,0 +1,107 @@
+.main-prints {
+    gap: 50px;
+}
+
+.prints-page-part {
+    height: 90%;
+    width: 40%;
+    padding: 30px;
+
+    border-radius: 30px;
+    background-color: darkcyan;
+}
+
+.print, .day {
+    color: black;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #fff;
+}
+
+.print-file > p {
+    color: black;
+}
+
+.day > a, .print-file > p > a, .print > p > a {
+    text-decoration: none;
+    color: blue;
+}
+
+.print-link {
+    display: block;
+    max-width: 70%;
+    overflow: scroll;
+}
+
+.print > p {
+    color: black;
+}
+
+.print > p > a {
+    color: blue;
+}
+
+.prints, .days {
+    max-height: 90%;
+    gap: 20px;
+    overflow: scroll;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.print-info {
+    font-size: 18px;
+}
+
+.print-file {
+    color: black;
+    display: flex;
+    justify-content: space-between;
+}
+
+.print-filename {
+    width: 80%;
+    white-space: nowrap;
+    overflow: scroll;
+}
+
+/* get rid of navbar */
+.print-filename::-webkit-scrollbar {
+  display: none;
+}
+
+.print-filename {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.prints::-webkit-scrollbar, .days::-webkit-scrollbar{
+  display: none;
+}
+
+.prints, .days {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.prints-page-part-heading {
+    font-size: 30px;
+    margin-bottom: 30px;
+}
+
+@media screen and (max-width: 910px) {
+    .main-prints {
+        height: fit-content;
+        gap: 50px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .prints-page-part {
+        width: 360px;
+        height: 500px;
+    }
+}

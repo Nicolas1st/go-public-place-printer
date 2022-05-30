@@ -3,7 +3,7 @@ fetch("/stats/")
     return response.json();
 })
 .then((json) => {
-    const dailyUsage = json.dailyUsage;
+    const dailyUsage = json.dailyUsage.reverse();
 
     const labels = [];
     for (let i = dailyUsage.length-1; i >=  0; i--) {

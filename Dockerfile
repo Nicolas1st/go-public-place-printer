@@ -1,4 +1,9 @@
-FROM golang:1.18-alpine
+FROM golang:1.18.2
+
+RUN apt-get update -y && apt-get install -y \
+  nodejs \
+  npm \
+  poppler-utils
 
 RUN mkdir /app
 COPY go.mod /app
@@ -13,7 +18,6 @@ RUN go mod download github.com/jackc/chunkreader
 RUN go mod download github.com/jackc/pgproto3
 
 # js deps
-RUN apk add --update nodejs npm
 RUN npm install webpack
 
 COPY . /app

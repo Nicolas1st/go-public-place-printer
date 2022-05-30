@@ -9,11 +9,19 @@ services:
     depends_on:
       - database
     environment:
-      - PATH_TO_FILES="/files"
+      - APP_DB_USER=postgres
+      - APP_DB_HOST=database
+      - APP_DB_PASSWORD=password
+      - APP_DB_DBNAME=printer
+      - APP_DB_PORT=5432
+      - APP_PATH_TO_FILES=/files
+      - APP_PORT=8880
+      - APP_ADMIN_LOGIN=admin
+      - APP_ADMIN_EMAIL=admin@admin.admin
+      - APP_ADMIN_PASSWORD=adminpassword
 
   database:
     image: postgres:latest
-    container_name: database
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password

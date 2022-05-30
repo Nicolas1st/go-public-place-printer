@@ -40,7 +40,7 @@ func (c *jobsController) SubmitJob(w http.ResponseWriter, r *http.Request) {
 	// extract the file form the form
 	file, fileHeader, err := r.FormFile("file")
 	if err != nil {
-		jsonResponse.FlashMessages = append(jsonResponse.FlashMessages, "No file provided")
+		jsonResponse.FlashMessages = append(jsonResponse.FlashMessages, "Необходимо выбрать файл для печати")
 		json.NewEncoder(w).Encode(&jsonResponse)
 		return
 	}
@@ -48,7 +48,7 @@ func (c *jobsController) SubmitJob(w http.ResponseWriter, r *http.Request) {
 	// check whether the file is pdf
 	bytes, err := ioutil.ReadAll(file)
 	if err != nil {
-		jsonResponse.FlashMessages = append(jsonResponse.FlashMessages, "Corrupted file")
+		jsonResponse.FlashMessages = append(jsonResponse.FlashMessages, "Не получилось открыть файл")
 		json.NewEncoder(w).Encode(&jsonResponse)
 		return
 	}
@@ -56,7 +56,7 @@ func (c *jobsController) SubmitJob(w http.ResponseWriter, r *http.Request) {
 	// проверить тип документа
 	mimeType := http.DetectContentType(bytes)
 	if mimeType != "application/pdf" {
-		jsonResponse.FlashMessages = append(jsonResponse.FlashMessages, "The file provided is not a pdf file")
+		jsonResponse.FlashMessages = append(jsonResponse.FlashMessages, "Возможна печать только PDF файлов")
 		json.NewEncoder(w).Encode(&jsonResponse)
 		return
 	}
@@ -66,7 +66,7 @@ func (c *jobsController) SubmitJob(w http.ResponseWriter, r *http.Request) {
 	filename := strings.ReplaceAll(fileHeader.Filename, " ", "")
 	filepath, err := c.filer.StoreFile(file, session.Username, filename)
 	if err != nil {
-		jsonResponse.FlashMessages = append(jsonResponse.FlashMessages, "Could not store the file, ran out of memory")
+		jsonResponse.FlashMessages = append(jsonResponse.FlashMessages, "Невозможно сохранить файл, закончилась память")
 		json.NewEncoder(w).Encode(&jsonResponse)
 		return
 	}

@@ -32,13 +32,13 @@ func (c *viewsController) handleLoginForm(w http.ResponseWriter, r *http.Request
 	// check if user exists
 	user, err := c.db.GetUserByName(username)
 	if err != nil {
-		messages.Add("Incorrect name or password", pages.ErrorMessage)
+		messages.Add("Неверное имя или пароль", pages.ErrorMessage)
 		return messages, false
 	}
 
 	// check if password is valid
 	if !user.IsPasswordValid(password) {
-		messages.Add("Incorrect name or password", pages.ErrorMessage)
+		messages.Add("Неверное имя или пароль", pages.ErrorMessage)
 		return messages, false
 	}
 

@@ -38,7 +38,7 @@ func (c *viewsController) handleSignUpForm(w http.ResponseWriter, r *http.Reques
 
 	// проверить уникальность email
 	if _, err := c.db.GetUserByEmail(email); err == nil {
-		messages.Add("Email уже занят", pages.ErrorMessage)
+		messages.Add("Почта уже занята", pages.ErrorMessage)
 	}
 
 	// проверить длину логина

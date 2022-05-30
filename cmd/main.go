@@ -36,9 +36,9 @@ func main() {
 	APP_DB_PORT := getEnvVar("APP_DB_PORT")
 	APP_PATH_TO_FILES := getEnvVar("APP_PATH_TO_FILES")
 	APP_PORT := getEnvVar("APP_PORT")
-	APP_ADMIN_LOGIN := getEnvVar("admin")
-	APP_ADMIN_EMAIL := getEnvVar("admin@admin.admin")
-	APP_ADMIN_PASSWORD := getEnvVar("adminpassword")
+	APP_ADMIN_LOGIN := getEnvVar("APP_ADMIN_LOGIN")
+	APP_ADMIN_EMAIL := getEnvVar("APP_ADMIN_EMAIL")
+	APP_ADMIN_PASSWORD := getEnvVar("APP_ADMIN_PASSWORD")
 
 	// config
 	server := &http.Server{Addr: ":" + APP_PORT}

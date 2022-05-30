@@ -1,7 +1,7 @@
 {{ define "main" }}
     <main class="main">
         <div class="form-container">
-            <h1 class="form-title"> Login </h1>
+            <h1 class="form-title"> Вход </h1>
             <form action="{{ .Endpoints.LoginPage }}" method="post" class="form">
                 <div class="flash-messages">
                     {{ range .FlashMessages }}
@@ -10,15 +10,15 @@
                 </div>
                 <div class="form-fields">
                     <div class="form-field">
-                        <label for="username"> Username </label>
+                        <label for="username"> Логин </label>
                         <input type="text" name="username" id="username" required>
                     </div>
                     <div class="form-field">
-                        <label for="password"> Password </label>
+                        <label for="password"> Пароль </label>
                         <input type="password" name="password" id="password" required>
                     </div>
                 </div>
-                <input type="submit" class="form-submit-button" value="Login">
+                <input type="submit" class="form-submit-button" value="Войти">
             </form>
         </div>
     </main>

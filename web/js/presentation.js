@@ -76,7 +76,7 @@ function createUserDetails(emailField, printPermissionField, pagesPerMonthField)
 
 function createEmailField(userEmail) {
     const email = document.createElement("p");
-    email.innerText = "Email " + userEmail;
+    email.innerText = "Почта: " + userEmail;
     email.classList.add("user-info");
 
     return email

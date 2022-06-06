@@ -49,7 +49,7 @@ function createJobElement(id, filename) {
     }
     {
         const cancelJobButton = document.createElement("button");
-        cancelJobButton.innerText = "Cancel";
+        cancelJobButton.innerText = "Отменить";
         cancelJobButton.classList.add("cancel-job-button");
 
         // add click handler

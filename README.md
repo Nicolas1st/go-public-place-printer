@@ -1,5 +1,9 @@
 # go-printer
 
+## Workflow
+
+<img src="./printer.gif" alt="gif with gameplay" width="1000"/>
+
 ## Description
 
 Web-application for setting up and managing a printer
